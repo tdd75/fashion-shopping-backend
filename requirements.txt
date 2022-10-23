@@ -1,5 +1,17 @@
+# django
 django
 djangorestframework
-pyyaml
 django-cors-headers
+djangorestframework-simplejwt
+
+# database
+psycopg2
+
+# debug in VSCode
 debugpy
+
+# environment variables
+python-dotenv
+
+# google APIs
+google-api-python-client
