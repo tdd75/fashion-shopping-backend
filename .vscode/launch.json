@@ -10,7 +10,7 @@
       "request": "attach",
       "port": 9999,
       "host": "localhost"
-      //   "justMyCode": false
+      // "justMyCode": false
     }
   ]
 }

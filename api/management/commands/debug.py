@@ -23,4 +23,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         initialize_debugger()
-        call_command('runserver', '127.0.0.1:8000')
+        call_command('runserver', '0.0.0.0:8000')
