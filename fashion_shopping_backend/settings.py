@@ -32,7 +32,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '192.168.1.5',
+    '192.168.1.2',
 ]
 
 
@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'users',
     'products',
     'product_types',
+    'reviews',
+    'cart_items',
 ]
 
 MIDDLEWARE = [
@@ -158,8 +160,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-        # 'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
@@ -168,8 +170,10 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ['Bearer'],
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1)
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=7),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=30)
+    # 'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
+    # 'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1)
 }
 
 SPECTACULAR_SETTINGS = {
@@ -178,8 +182,13 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': f'/{os.getenv("API_PREFIX")}',
-    "SWAGGER_UI_DIST": "//unpkg.com/swagger-ui-dist@latest",
-    'COMPONENT_SPLIT_REQUEST': True
+    'SWAGGER_UI_DIST': '//unpkg.com/swagger-ui-dist@latest',
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+    },
 }
 
-OAUTH_GOOGLE_CLIENT_ID = str(os.getenv('OAUTH_GOOGLE_CLIENT_ID'))
+AUTHENTICATION_BACKENDS = [
+    'custom_auth.backends.EmailUsernamePhoneBackend',
+]

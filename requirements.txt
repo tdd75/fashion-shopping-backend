@@ -4,6 +4,9 @@ djangorestframework
 django-cors-headers
 djangorestframework-simplejwt
 
+# Swagger/OpenAPI
+drf-spectacular
+
 # database
 psycopg2
 
@@ -13,11 +16,8 @@ debugpy
 # environment variables
 python-dotenv
 
-# google APIs
-google-api-python-client
-
 # Image field
 Pillow
 
-# Swagger/OpenAPI
-drf-spectacular
+# for calling external APIs
+requests

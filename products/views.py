@@ -1,5 +1,5 @@
 from rest_framework import generics
-from drf_spectacular.utils import OpenApiExample, extend_schema_view, extend_schema
+from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from .models import Product
 from .serializers import ProductSerializer
