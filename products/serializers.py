@@ -7,8 +7,4 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
-        extra_kwargs = {
-            'created_at': {'read_only': True},
-            'updated_at': {'read_only': True},
-            'rating': {'read_only': True},
-        }
+        read_only_fields = ('created_at', 'updated_at', 'rating')
