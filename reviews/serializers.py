@@ -5,9 +5,16 @@ from users.serializers import UserShortInfoSerializer
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = UserShortInfoSerializer()
+    author = UserShortInfoSerializer()
 
     class Meta:
         model = Review
         fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at', 'author')
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        instance.product.rating_accumulate += validated_data['rating']
+        instance.product.rating_count += 1
+        instance.product.save()
+        return instance

@@ -18,7 +18,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         validated_data = super().validate(attrs)
         if validated_data['quantity'] > validated_data['product_type'].quantity:
             raise ValidationError({
-                'quantity': f'Products quantity exceeds the available quantity\
+                'quantity': f'Products quantity exceeds the available quantity \
                     ({validated_data["product_type"].quantity})'
             })
 

@@ -7,6 +7,7 @@ from product_types.serializers import ProductTypeDetailSerializer
 class ProductSerializer(serializers.ModelSerializer):
     types = ProductTypeDetailSerializer(
         source='producttype_set', many=True, required=False)
+    rating = serializers.ReadOnlyField()
 
     class Meta:
         model = Product
