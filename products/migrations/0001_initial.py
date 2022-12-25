@@ -15,12 +15,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Product',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
-                ('image', models.ImageField(upload_to='static/upload/product')),
+                ('image', models.ImageField(upload_to='static/uploads/products')),
                 ('description', models.TextField()),
                 ('price', models.FloatField()),
-                ('rating', models.FloatField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(5)])),
+                ('rating', models.FloatField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(5)])),
                 ('available', models.IntegerField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),

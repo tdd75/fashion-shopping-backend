@@ -10,22 +10,19 @@ class AddressUpdateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserInfoSerializer(serializers.ModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer):
     address = AddressUpdateSerializer()
-    full_name = serializers.SerializerMethodField('get_full_name')
-
-    def get_full_name(self, obj) -> str:
-        return obj.first_name + ' ' + obj.last_name
+    full_name = serializers.ReadOnlyField()
 
     class Meta:
         model = get_user_model()
         exclude = ('password',)
 
 
-class UserShortInfoSerializer(UserInfoSerializer):
+class UserShortInfoSerializer(UserDetailSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'full_name',)
+        fields = ('id', 'full_name')
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
@@ -37,7 +34,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
                   'last_name', 'avatar', 'address')
 
     def update(self, instance, validated_data):
-        address_data = validated_data['address']
+        address_data = validated_data.pop('address')
 
         if not instance.address:
             instance.address_id = Address.objects.create(**address_data)
@@ -45,7 +42,5 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             for attr, value in address_data.items():
                 setattr(instance.address, attr, value)
             instance.address.save()
-
-        del validated_data['address']
 
         return super().update(instance, validated_data)

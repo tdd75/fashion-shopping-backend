@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import UserInfoDetailAPIView
+from .views import UserInfoDetailUpdateAPIView
 
 urlpatterns = [
-    path('info/', UserInfoDetailAPIView.as_view(), name='user_info'),
+    path('me/', UserInfoDetailUpdateAPIView.as_view(), name='user_info'),
 ]

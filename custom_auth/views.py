@@ -30,7 +30,9 @@ class MyObtainTokenPairAPIView(TokenObtainPairView):
             OpenApiExample(
                 'Customer account',
                 value={
-                    'identify': 'tranducduy7520@gmail.com',
+                    'email': 'tranducduy7520@gmail.com',
+                    'username': 'tranducduy7520',
+                    'phone': '0834275110',
                     'password': 'duytd123',
                     'first_name': 'Duy',
                     'last_name': 'Tran',

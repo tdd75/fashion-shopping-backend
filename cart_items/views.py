@@ -1,17 +1,18 @@
 from rest_framework import generics
-from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from .models import CartItem
 from .serializers import CartItemSerializer
 
 
-@extend_schema_view(
-    post=extend_schema(summary='multipart/form-data')
-)
 class CartItemListCreateAPIView(generics.ListCreateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class CartItemDetailUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CartItem.objects.all()

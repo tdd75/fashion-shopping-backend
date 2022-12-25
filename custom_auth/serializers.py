@@ -1,9 +1,8 @@
 import requests
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from django.contrib.auth.models import update_last_login
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
@@ -18,17 +17,19 @@ class LoginSerializer(TokenObtainPairSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=True)
     password = serializers.CharField(
         required=True, validators=[validate_password])
 
     class Meta:
         model = get_user_model()
-        fields = ('password', 'email', 'first_name', 'last_name')
+        fields = ('email', 'username', 'phone',
+                  'password', 'first_name', 'last_name')
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True}
         }
+        write_only_fields = ('password',)
+        optional_fields = ('username', 'phone')
 
     def create(self, validated_data):
         UserModel = get_user_model()
