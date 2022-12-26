@@ -1,61 +1,52 @@
 import requests
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from django.contrib.auth.models import update_last_login
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.settings import api_settings
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from rest_framework.exceptions import AuthenticationFailed, ValidationError, ParseError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core.exceptions import ValidationError
 
 from django.contrib.auth import get_user_model
 
 
 class LoginSerializer(TokenObtainPairSerializer):
-    identify = serializers.CharField(required=True, allow_null=False)
+    identify = serializers.CharField(allow_null=False)
     username_field = 'identify'
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
-        required=True, validators=[validate_password])
+        validators=[validate_password], write_only=True)
 
     class Meta:
         model = get_user_model()
         fields = ('email', 'username', 'phone',
-                  'password', 'first_name', 'last_name')
-        extra_kwargs = {
-            'first_name': {'required': True},
-            'last_name': {'required': True}
-        }
-        write_only_fields = ('password',)
+                  'first_name', 'last_name', 'password',)
         optional_fields = ('username', 'phone')
 
     def create(self, validated_data):
         UserModel = get_user_model()
 
         user_existed = UserModel.objects.filter(
-            email__exact=validated_data['email']).first()
+            email=validated_data['email']).first()
         if user_existed:
             if user_existed.password:
                 raise ValidationError('This email is already in use')
-            user = user_existed
         else:
-            user = UserModel.objects.create(
-                username=validated_data['email'],
-                email=validated_data['email'],
-                first_name=validated_data['first_name'],
-                last_name=validated_data['last_name']
-            )
-
-        user.set_password(validated_data['password'])
-        user.save()
+            password = validated_data.pop('password')
+            user = UserModel.objects.create(**validated_data)
+            user.set_password(password)
+            user.save()
 
         return user
 
 
 class OauthTokenObtainPairSerializer(serializers.Serializer):
-    token = serializers.CharField(required=True)
+    token = serializers.CharField()
 
     class Meta:
         fields = ['token']
@@ -69,7 +60,7 @@ class OauthTokenObtainPairSerializer(serializers.Serializer):
         user_info = self.get_user_info(data['token'])
 
         user_existed = UserModel.objects.filter(
-            email__exact=user_info['email']).first()
+            email=user_info['email']).first()
 
         if not user_existed:
             user = UserModel.objects.create(
@@ -119,3 +110,28 @@ class OauthFacebookTokenObtainPairSerializer(OauthTokenObtainPairSerializer):
             'last_name': response['last_name'],
         }
         return user_info
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(validators=[validate_password])
+    new_password = serializers.CharField(validators=[validate_password])
+
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+def only_int(value):
+    if value.isdigit() == False:
+        raise ValidationError('Code can only include numbers')
+
+
+class VerifyCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(validators=[only_int])
+
+
+class RecoverPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    recover_token = serializers.CharField()
+    new_password = serializers.CharField(validators=[validate_password])

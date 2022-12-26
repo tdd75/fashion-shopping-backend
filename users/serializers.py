@@ -12,7 +12,7 @@ class AddressUpdateSerializer(serializers.ModelSerializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     address = AddressUpdateSerializer()
-    full_name = serializers.ReadOnlyField()
+    full_name = serializers.CharField(read_only=True)
 
     class Meta:
         model = get_user_model()

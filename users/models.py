@@ -24,7 +24,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     @property
-    def full_name(self) -> str:
+    def full_name(self):
         return self.first_name + ' ' + self.last_name
 
     def __str__(self):

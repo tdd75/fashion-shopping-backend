@@ -7,7 +7,8 @@ from cart_items.serializers import CartItemSerializer
 
 class OrderSerializer(serializers.ModelSerializer):
     cart_items = CartItemSerializer(source='cartitem_set', many=True)
-    amount = serializers.ReadOnlyField()
+    amount = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
 
     class Meta:
         model = Order
@@ -18,7 +19,8 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderCreateSerializer(serializers.ModelSerializer):
     cart_items = serializers.PrimaryKeyRelatedField(
         queryset=CartItem.objects.all(), many=True, write_only=True)
-    amount = serializers.ReadOnlyField()
+    amount = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
 
     Meta = OrderSerializer.Meta
 

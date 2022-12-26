@@ -32,7 +32,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '192.168.1.2',
+    '192.168.1.3',
 ]
 
 
@@ -62,6 +62,8 @@ INSTALLED_APPS = [
     'reviews',
     'cart_items',
     'orders',
+    'discount_tickets',
+    'chat_messages',
 ]
 
 MIDDLEWARE = [
@@ -138,7 +140,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -162,12 +164,12 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'api.permissions.UserReadOnly',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'COERCE_DECIMAL_TO_STRING': False,
 }
 
 SIMPLE_JWT = {
@@ -194,3 +196,11 @@ SPECTACULAR_SETTINGS = {
 AUTHENTICATION_BACKENDS = [
     'custom_auth.backends.EmailUsernamePhoneBackend',
 ]
+
+# SENDING EMAIL
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tranducduy7520@gmail.com'
+EMAIL_HOST_PASSWORD = 'xmvmxtieaybeinqt'

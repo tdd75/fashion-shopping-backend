@@ -22,7 +22,7 @@ class CartItem(models.Model):
         max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
 
     @property
-    def amount(self) -> float:
+    def amount(self):
         return self.price * self.quantity
 
     class Meta:

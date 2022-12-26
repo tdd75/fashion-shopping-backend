@@ -5,7 +5,8 @@ from .models import CartItem
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    amount = serializers.ReadOnlyField()
+    amount = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
 
     class Meta:
         model = CartItem
@@ -27,7 +28,8 @@ class CartItemSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # backup product information
         product_type = validated_data.get('product_type')
-        for fields in ['size', 'color', 'price']:
+        product_type_fields = ['size', 'color', 'price']
+        for fields in product_type_fields:
             validated_data[fields] = getattr(product_type, fields)
         validated_data['image'] = getattr(product_type.product, 'image')
 

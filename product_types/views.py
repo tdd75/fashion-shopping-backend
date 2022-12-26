@@ -1,4 +1,4 @@
-from rest_framework import generics, filters
+from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import ProductTypeSerializer

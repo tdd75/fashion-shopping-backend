@@ -1,12 +1,14 @@
 from rest_framework import generics
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from api.permissions import UserReadOnly, IsOwner
 
 from .models import Order
 from .serializers import OrderSerializer, OrderCreateSerializer
 
 
 class OrderListCreateAPIView(generics.ListCreateAPIView):
+    permission_classes = (UserReadOnly, IsOwner)
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_backends = (

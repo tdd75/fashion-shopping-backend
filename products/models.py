@@ -14,7 +14,7 @@ class Product(models.Model):
     rating_count = models.IntegerField(default=0)
 
     @property
-    def rating(self) -> float:
+    def rating(self):
         if self.rating_count == 0:
             return 0
         return self.rating_accumulate / self.rating_count

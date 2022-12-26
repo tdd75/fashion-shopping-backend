@@ -27,7 +27,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
-    def amount(self) -> float:
+    def amount(self):
         return sum([cart_item.amount for cart_item in self.cartitem_set.all()])
 
     def __str__(self):

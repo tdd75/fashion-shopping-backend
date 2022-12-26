@@ -5,12 +5,12 @@ from users.serializers import UserShortInfoSerializer
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = UserShortInfoSerializer()
+    owner = UserShortInfoSerializer(read_only=True)
 
     class Meta:
         model = Review
         fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at', 'author')
+        read_only_fields = ('created_at', 'updated_at')
 
     def create(self, validated_data):
         instance = super().create(validated_data)
