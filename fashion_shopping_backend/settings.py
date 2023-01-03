@@ -30,9 +30,7 @@ SECRET_KEY = 'django-insecure-@qgfj76u_0q95v+s%dz)bo4)$*e@)rew$y&_#ciiy*6jgt+#p*
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '192.168.1.3',
+    '*',
 ]
 
 
@@ -64,6 +62,7 @@ INSTALLED_APPS = [
     'orders',
     'discount_tickets',
     'chat_messages',
+    'transactions',
 ]
 
 MIDDLEWARE = [
@@ -140,7 +139,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

@@ -34,13 +34,14 @@ class UserUpdateSerializer(serializers.ModelSerializer):
                   'last_name', 'avatar', 'address')
 
     def update(self, instance, validated_data):
-        address_data = validated_data.pop('address')
+        if 'address' in validated_data:
+            address_data = validated_data.pop('address')
 
-        if not instance.address:
-            instance.address_id = Address.objects.create(**address_data)
-        else:
-            for attr, value in address_data.items():
-                setattr(instance.address, attr, value)
-            instance.address.save()
+            if not instance.address:
+                instance.address_id = Address.objects.create(**address_data)
+            else:
+                for attr, value in address_data.items():
+                    setattr(instance.address, attr, value)
+                instance.address.save()
 
         return super().update(instance, validated_data)

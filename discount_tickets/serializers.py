@@ -6,7 +6,6 @@ from .models import DiscountTicket
 
 
 class DiscountTicketSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = DiscountTicket
         fields = '__all__'

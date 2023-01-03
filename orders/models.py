@@ -23,6 +23,7 @@ class Order(models.Model):
                             unique=True, default=generate_code)
     stage = models.CharField(
         max_length=32, choices=Stage.choices, default=Stage.TO_PAY)
+    address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
