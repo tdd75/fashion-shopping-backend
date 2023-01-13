@@ -25,5 +25,8 @@ Pillow
 # For calling external APIs
 requests
 
-# For deployment
+# WSGI Server
 gunicorn
+
+# For serving static files
+whitenoise
