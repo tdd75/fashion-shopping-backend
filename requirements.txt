@@ -24,3 +24,6 @@ Pillow
 
 # For calling external APIs
 requests
+
+# For deployment
+gunicorn
