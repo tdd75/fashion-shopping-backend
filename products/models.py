@@ -8,6 +8,7 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    feature_vector = models.BinaryField(null=True, default=None)
 
     # supported fields for calculate average rating based on reviews
     rating_accumulate = models.PositiveBigIntegerField(default=0)
