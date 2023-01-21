@@ -3,10 +3,9 @@ from abc import abstractmethod
 from django.contrib.auth.models import update_last_login
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.settings import api_settings
-from rest_framework.exceptions import AuthenticationFailed, ValidationError, ParseError
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core.exceptions import ValidationError
 
@@ -24,23 +23,22 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('email', 'username', 'phone',
-                  'first_name', 'last_name', 'password',)
-        optional_fields = ('username', 'phone')
+        fields = ('first_name', 'last_name', 'username', 'email', 'password')
 
     def create(self, validated_data):
         UserModel = get_user_model()
 
-        user_existed = UserModel.objects.filter(
-            email=validated_data['email']).first()
-        if user_existed:
-            if user_existed.password:
-                raise ValidationError('This email is already in use')
-        else:
-            password = validated_data.pop('password')
-            user = UserModel.objects.create(**validated_data)
-            user.set_password(password)
-            user.save()
+        for field in ['email', 'username']:
+            user_existed = UserModel.objects.filter(
+                **{field: validated_data[field]}).first()
+            if user_existed:
+                if user_existed.password:
+                    raise ValidationError(f'This {field} is already in use')
+
+        password = validated_data.pop('password')
+        user = UserModel.objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
 
         return user
 

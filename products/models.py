@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 
 class Product(models.Model):
@@ -9,6 +10,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     feature_vector = models.BinaryField(null=True, default=None)
+    favorite_users = models.ManyToManyField(get_user_model())
 
     # supported fields for calculate average rating based on reviews
     rating_accumulate = models.PositiveBigIntegerField(default=0)
@@ -19,6 +21,14 @@ class Product(models.Model):
         if self.rating_count == 0:
             return 0
         return self.rating_accumulate / self.rating_count
+
+    @property
+    def price_range(self):
+        product_types = self.producttype_set.all()
+        if not product_types:
+            return None
+        return [min(product_type.price for product_type in product_types),
+                max(product_type.price for product_type in product_types)]
 
     def __str__(self):
         return self.name

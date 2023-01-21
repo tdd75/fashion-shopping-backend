@@ -5,7 +5,7 @@ from .serializers import ProductTypeSerializer
 from .models import ProductType
 
 
-class ProductTypeListCreateAPIView(generics.ListCreateAPIView):
+class ProductTypeListCreateAPIView(generics.ListAPIView):
     queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
     filter_backends = (
@@ -14,7 +14,7 @@ class ProductTypeListCreateAPIView(generics.ListCreateAPIView):
     filterset_fields = ('product',)
 
 
-class ProductTypeDetailUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
+class ProductTypeDetailUpdateDeleteAPIView(generics.RetrieveAPIView):
     queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
     lookup_field = 'pk'

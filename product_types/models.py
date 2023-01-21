@@ -12,5 +12,8 @@ class ProductType(models.Model):
     price = models.DecimalField(
         max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
 
+    class Meta:
+        unique_together = ('color', 'size', 'product',)
+
     def __str__(self):
         return f'{self.color}_{self.size}'

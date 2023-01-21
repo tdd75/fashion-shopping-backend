@@ -26,7 +26,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         return validated_data
 
     def create(self, validated_data):
-        # backup product information
+        # create backup product information
         product_type = validated_data.get('product_type')
         product_type_fields = ['size', 'color', 'price']
         for fields in product_type_fields:

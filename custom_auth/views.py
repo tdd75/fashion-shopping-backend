@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from drf_spectacular.utils import OpenApiExample, extend_schema_view, extend_schema
 from django.contrib.auth import get_user_model
@@ -60,6 +60,9 @@ class RegisterAPIView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     queryset = get_user_model().objects.all()
     serializer_class = RegisterSerializer
+    
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
 
 
 class OauthGoogleAPIView(TokenObtainPairView):
@@ -94,6 +97,9 @@ class ChangePasswordView(generics.CreateAPIView):
 class ForgotPasswordView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = ForgotPasswordSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(expired_at = timezone.now() + timezone.timedelta(minutes=5))
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

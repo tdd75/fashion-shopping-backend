@@ -1,3 +1,4 @@
 from django.contrib import admin
+from discount_tickets.models import DiscountTicket
 
-# Register your models here.
+admin.site.register(DiscountTicket)

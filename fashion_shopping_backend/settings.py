@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@qgfj76u_0q95v+s%dz)bo4)$*e@)rew$y&_#ciiy*6jgt+#p*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '*',
@@ -60,8 +60,9 @@ INSTALLED_APPS = [
 
     # internal apps
     'api',
-    'custom_auth',
     'users',
+    'custom_auth',
+    'addresses',
     'products',
     'product_types',
     'reviews',
@@ -154,7 +155,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 # For serving static files
-STATICFILES_STORAGE = ('whitenoise.storage.CompressedManifestStaticFilesStorage')
+STATICFILES_STORAGE = (
+    'whitenoise.storage.CompressedManifestStaticFilesStorage')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -216,3 +218,26 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'tranducduy7520@gmail.com'
 EMAIL_HOST_PASSWORD = 'xmvmxtieaybeinqt'
+
+# LOGGING
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
