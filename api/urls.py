@@ -7,10 +7,10 @@ urlpatterns = [
     path('products/', include('products.urls')),
     path('product-types/', include('product_types.urls')),
     path('reviews/', include('reviews.urls')),
-    path('cart-items/', include('cart_items.urls')),
+    path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
     path('discount-tickets/', include('discount_tickets.urls')),
-    path('chat-messages/', include('chat_messages.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 handler500 = 'rest_framework.exceptions.server_error'

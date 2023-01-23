@@ -29,10 +29,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@qgfj76u_0q95v+s%dz)bo4)$*e@)rew$y&_#ciiy*6jgt+#p*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*',
+    'localhost',
+    '127.0.0.1',
+    '192.168.1.9',
+    DOMAIN,
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -49,14 +52,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'whitenoise.runserver_nostatic',
-
     # 3rd-party packages
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'drf_spectacular',
     'django_filters',
+    'whitenoise.runserver_nostatic',
 
     # internal apps
     'api',
@@ -66,10 +68,10 @@ INSTALLED_APPS = [
     'products',
     'product_types',
     'reviews',
-    'cart_items',
+    'cart',
     'orders',
     'discount_tickets',
-    'chat_messages',
+    'chat',
     'transactions',
 ]
 
@@ -158,13 +160,14 @@ USE_TZ = True
 STATICFILES_STORAGE = (
     'whitenoise.storage.CompressedManifestStaticFilesStorage')
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = BASE_DIR / 'uploads'
+MEDIA_URL = 'uploads/'
 
+STATIC_ROOT = BASE_DIR / 'static'
 STATIC_URL = 'static/'
-
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'static/'
-# ]
+STATICFILES_DIRS = [
+    BASE_DIR / 'uploads'
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -220,7 +223,6 @@ EMAIL_HOST_USER = 'tranducduy7520@gmail.com'
 EMAIL_HOST_PASSWORD = 'xmvmxtieaybeinqt'
 
 # LOGGING
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

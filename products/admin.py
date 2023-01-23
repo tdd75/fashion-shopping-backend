@@ -27,6 +27,7 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = (ProductTypeInline,)
     form = ProductAdminForm
     ordering = ('id',)
+    actions = ('set_quantity_zero',)
 
 
 admin.site.register(Product, ProductAdmin)

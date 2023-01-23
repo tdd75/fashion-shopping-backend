@@ -1,11 +1,10 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .views import ProductListCreateAPIView, ProductDetailAPIView, ProductFavoriteAPIView
+from .views import ProductViewSet
+
+router = DefaultRouter()
+router.register('', ProductViewSet, basename='product')
 
 urlpatterns = [
-    path('', ProductListCreateAPIView.as_view(), name='product_list_create'),
-    path('<int:pk>/', ProductDetailAPIView.as_view(),
-         name='product_detail'),
-    path('<int:pk>/favorite', ProductFavoriteAPIView.as_view(),
-         name='add_favorite_product'),
+    *router.urls,
 ]

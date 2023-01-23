@@ -1,18 +1,14 @@
-from rest_framework import generics, filters
-from rest_framework import status
+from rest_framework import filters, viewsets, status
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema_view, extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 
 from .models import Product
 from .serializers import ProductSerializer, ProductFavoriteSerializer
 from .filter_set import ProductFilterSet
 
 
-@extend_schema_view(
-    post=extend_schema(summary='multipart/form-data')
-)
-class ProductListCreateAPIView(generics.ListAPIView):
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = (
@@ -25,14 +21,12 @@ class ProductListCreateAPIView(generics.ListAPIView):
     ordering_fields = ('price', 'rating')
     ordering = ('id',)
 
-
-class ProductDetailAPIView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    lookup_field = 'pk'
-
-
-class ProductFavoriteAPIView(generics.GenericAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductFavoriteSerializer
-    lookup_field = 'pk'
+    @action(detail=True, methods=['post'], serializer_class=ProductFavoriteSerializer, url_path='update-favorite')
+    def update_favorite(self, request, pk=None):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if serializer.data['is_favorite']:
+            request.user.favorite_products.add(pk)
+        else:
+            request.user.favorite_products.remove(pk)
+        return Response({'status': 'Update succssfully.'}, status=status.HTTP_200_OK)

@@ -1,17 +1,17 @@
-from rest_framework import generics
+from rest_framework import mixins, viewsets
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import get_user_model
 
-from users.serializers import UserDetailSerializer
+from users.serializers import UserInfoSerializer
 
 
 @extend_schema(methods=['PUT'], exclude=True)
-class UserInfoDetailUpdateAPIView(generics.RetrieveUpdateAPIView):
+class UserInfoDetailUpdateViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     queryset = get_user_model().objects.all()
-    serializer_class = UserDetailSerializer
-
-    def put(self):
-        pass
+    serializer_class = UserInfoSerializer
 
     def get_object(self):
         return self.request.user
+
+    def put(self):
+        pass

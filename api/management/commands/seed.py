@@ -1,36 +1,21 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
 
-
-def create_users():
-    admin_info = {
-        'username': 'admin',
-        'email': 'admin@gmail.com',
-        'password': 'admin',
-    }
-    bot_info = {
-        'username': 'bot',
-        'email': 'bot@gmail.com',
-        'password': 'bot',
-    }
-
-    UserModel = get_user_model()
-    for info in [admin_info, bot_info]:
-        # delete account if existed
-        UserModel.objects.filter(
-            email=info['email']).delete()
-        # create new account
-        UserModel.objects.create_superuser(**info)
-
-
-def run_seed():
-    create_users()
+from .seeder.user import create_users
+from .seeder.product import create_products
 
 
 class Command(BaseCommand):
-    help = "seed database for testing and development."
+    help = "Seed database for testing and development"
 
     def handle(self, *args, **options):
-        self.stdout.write('seeding data...')
-        run_seed()
-        self.stdout.write('done.')
+        self.stdout.write('###Start')
+
+        self.stdout.write('Seeding users...')
+        create_users()
+        self.stdout.write('Done seeding users')
+
+        self.stdout.write('Seeding products...')
+        create_products()
+        self.stdout.write('Done seeding products')
+
+        self.stdout.write('###End')

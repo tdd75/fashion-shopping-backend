@@ -1,15 +1,9 @@
-from rest_framework import generics
+from rest_framework import viewsets
 
 from .serializers import TransactionSerializer
 from .models import Transaction
 
 
-class TransactionListCreateAPIView(generics.ListCreateAPIView):
+class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-
-
-class TransactionDetailUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
-    lookup_field = 'pk'

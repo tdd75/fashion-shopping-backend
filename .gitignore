@@ -9,3 +9,6 @@ __pycache__
 
 # static files
 static/*
+
+# media files
+uploads/*

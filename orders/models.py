@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
-
+from django.contrib.auth import get_user_model
 
 CODE_LENGTH = 8
 RANDOM_STRING_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -23,13 +23,15 @@ class Order(models.Model):
                             unique=True, default=generate_code)
     stage = models.CharField(
         max_length=32, choices=Stage.choices, default=Stage.TO_PAY)
-    address = models.TextField()
+    # order_items = models.JSONField()
+    # address = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     @property
     def amount(self):
-        return sum([cart_item.amount for cart_item in self.cartitem_set.all()])
+        return sum(cart_item.amount for cart_item in self.cartitem_set.all())
 
     def __str__(self):
         return self.code

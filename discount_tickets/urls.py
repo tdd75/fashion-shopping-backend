@@ -1,11 +1,10 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .views import DiscountTicketListCreateAPIView, DiscountTicketDetailUpdateDeleteAPIView
+from .views import DiscountTicketViewSet
+
+router = DefaultRouter()
+router.register('', DiscountTicketViewSet, basename='discount_ticket')
 
 urlpatterns = [
-    path('', DiscountTicketListCreateAPIView.as_view(),
-         name='discount_ticket_list_create'),
-    path('<int:pk>/', DiscountTicketDetailUpdateDeleteAPIView.as_view(),
-         name='discount_ticket_detail_update_delete'),
-
+    *router.urls
 ]

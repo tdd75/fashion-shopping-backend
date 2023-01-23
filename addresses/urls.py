@@ -1,9 +1,10 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .views import AddressListCreateAPIView, AddressDetailUpdateDeleteAPIView
+from .views import AddressViewSet
+
+router = DefaultRouter()
+router.register('', AddressViewSet, basename='address')
 
 urlpatterns = [
-    path('', AddressListCreateAPIView.as_view(), name='address_list_create'),
-    path('addresses/', AddressDetailUpdateDeleteAPIView.as_view(),
-         name='address_detail_update_delete'),
+    *router.urls
 ]

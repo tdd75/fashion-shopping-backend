@@ -1,9 +1,10 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .views import TransactionListCreateAPIView, TransactionDetailUpdateDeleteAPIView
+from .views import TransactionViewSet
+
+router = DefaultRouter()
+router.register('', TransactionViewSet, basename='transaction')
 
 urlpatterns = [
-    path('', TransactionListCreateAPIView.as_view(), name='transaction_list_create'),
-    path('<int:pk>/', TransactionDetailUpdateDeleteAPIView.as_view(),
-         name='transaction_detail_update_delete'),
+    *router.urls
 ]

@@ -20,6 +20,4 @@ class UserReadOnly(BasePermission):
 
 class IsOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method == 'POST':
-            return True
         return request.user.id == obj.owner.id

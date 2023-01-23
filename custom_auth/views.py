@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import AllowAny
@@ -11,7 +11,6 @@ from django.utils import timezone
 
 from .serializers import LoginSerializer, RegisterSerializer, OauthGoogleTokenObtainPairSerializer, OauthFacebookTokenObtainPairSerializer,\
     ChangePasswordSerializer, ForgotPasswordSerializer, VerifyCodeSerializer, RecoverPasswordSerializer
-
 from .models import ForgotPasswordCode
 
 
@@ -56,15 +55,6 @@ class MyObtainTokenPairAPIView(TokenObtainPairView):
         ]
     )
 )
-class RegisterAPIView(generics.CreateAPIView):
-    permission_classes = (AllowAny,)
-    queryset = get_user_model().objects.all()
-    serializer_class = RegisterSerializer
-    
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-
 class OauthGoogleAPIView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = OauthGoogleTokenObtainPairSerializer
@@ -73,6 +63,12 @@ class OauthGoogleAPIView(TokenObtainPairView):
 class OauthFacebookAPIView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = OauthFacebookTokenObtainPairSerializer
+
+
+class RegisterAPIView(generics.CreateAPIView):
+    permission_classes = (AllowAny,)
+    queryset = get_user_model().objects.all()
+    serializer_class = RegisterSerializer
 
 
 class ChangePasswordView(generics.CreateAPIView):
@@ -97,9 +93,10 @@ class ChangePasswordView(generics.CreateAPIView):
 class ForgotPasswordView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = ForgotPasswordSerializer
-    
+
     def perform_create(self, serializer):
-        serializer.save(expired_at = timezone.now() + timezone.timedelta(minutes=5))
+        serializer.save(expired_at=timezone.now() +
+                        timezone.timedelta(minutes=5))
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
