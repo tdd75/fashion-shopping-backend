@@ -12,13 +12,14 @@ class CartItemSerializer(serializers.ModelSerializer):
     # request
     product_type_id = serializers.PrimaryKeyRelatedField(
         queryset=ProductType.objects.all(), write_only=True)
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     # response
     product_type = ProductTypeDetailSerializer(read_only=True)
     product_id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = CartItem
-        exclude = ('order', 'owner', 'product')
+        exclude = ('order', 'product')
 
     def validate(self, attrs):
         validated_data = super().validate(attrs)

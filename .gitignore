@@ -11,4 +11,4 @@ __pycache__
 static/*
 
 # media files
-uploads/*
+media/*

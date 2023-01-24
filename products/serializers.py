@@ -19,8 +19,8 @@ class ProductSerializer(serializers.ModelSerializer):
         exclude = ('rating_accumulate', 'rating_count')
         read_only_fields = ('created_at', 'updated_at')
 
-    def get_is_favorite(self, obj):
-        return obj.customuser_set.filter(id=self.context['request'].user.id).exists()
+    def get_is_favorite(self, obj) -> bool:
+        return obj.favorited_users.filter(id=self.context['request'].user.id).exists()
 
 
 class ProductFavoriteSerializer(serializers.Serializer):

@@ -9,11 +9,11 @@ class EmailUsernamePhoneBackend(ModelBackend):
 
         identify = username or kwargs.get('identify')
         try:
-            user = UserModel.objects.get(
+            user = UserModel.objects.filter(
                 Q(email=identify)
                 | (Q(username__isnull=False) & Q(username=identify))
                 | (Q(phone__isnull=False) & Q(phone=identify))
-            )
+            ).first()
         except UserModel.DoesNotExist:
             UserModel().set_password(password)
         else:

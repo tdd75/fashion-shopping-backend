@@ -1,16 +1,21 @@
 from rest_framework import filters, viewsets, status
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from .models import Product
-from .serializers import ProductSerializer, ProductFavoriteSerializer
+from .serializers import *
 from .filter_set import ProductFilterSet
+from . import services
 
 
+@extend_schema_view(list=extend_schema(auth=[]), retrieve=extend_schema(auth=[]))
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    permission_classes = (AllowAny,)
     filter_backends = (
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -25,8 +30,6 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     def update_favorite(self, request, pk=None):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if serializer.data['is_favorite']:
-            request.user.favorite_products.add(pk)
-        else:
-            request.user.favorite_products.remove(pk)
-        return Response({'status': 'Update succssfully.'}, status=status.HTTP_200_OK)
+        services.update_favorite(**serializer.data,
+                                 product=self.get_object(), user_id=request.user.idd)
+        return Response({'message': 'Update succssfully.'}, status=status.HTTP_200_OK)

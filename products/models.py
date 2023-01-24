@@ -10,6 +10,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     feature_vector = models.BinaryField(null=True, default=None)
+    favorited_users = models.ManyToManyField(get_user_model(), blank=True)
 
     # supported fields for calculate average rating based on reviews
     rating_accumulate = models.PositiveBigIntegerField(default=0)

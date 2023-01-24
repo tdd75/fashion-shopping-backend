@@ -2,6 +2,7 @@ from rest_framework import mixins, viewsets
 
 from .models import CartItem
 from .serializers import CartItemSerializer
+from api.permissions import IsOwner
 
 
 class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
@@ -11,6 +12,3 @@ class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.Creat
 
     def get_queryset(self):
         return CartItem.objects.filter(owner_id=self.request.user.id)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)

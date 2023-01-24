@@ -2,7 +2,7 @@ from rest_framework import mixins, viewsets
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import get_user_model
 
-from users.serializers import UserInfoSerializer
+from custom_users.serializers import UserInfoSerializer
 
 
 @extend_schema(methods=['PUT'], exclude=True)
