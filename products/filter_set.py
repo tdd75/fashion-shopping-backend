@@ -3,10 +3,10 @@ from django_filters import FilterSet
 
 
 class ProductFilterSet(FilterSet):
-    quantity = filters.BooleanFilter(method='is_positive_number')
+    stocks = filters.BooleanFilter(method='is_positive_number')
 
     def is_positive_number(self, queryset, name, value):
         if value == True:
-            return queryset.filter(quantity__gt=0)
+            return queryset.filter(stocks__gt=0)
 
         return queryset

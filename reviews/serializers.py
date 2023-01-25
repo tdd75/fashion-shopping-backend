@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
 from .models import Review
-from custom_users.serializers import UserShortInfoSerializer
+from custom_users.serializers import UserShortSerializer
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    owner = UserShortInfoSerializer(
+    owner = UserShortSerializer(
         read_only=True, default=serializers.CurrentUserDefault())
 
     class Meta:

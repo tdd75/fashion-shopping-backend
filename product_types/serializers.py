@@ -1,15 +1,13 @@
-from rest_framework import serializers
+from rest_flex_fields import FlexFieldsModelSerializer
 
 from .models import ProductType
 
 
-class ProductTypeSerializer(serializers.ModelSerializer):
+class ProductTypeSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = ProductType
         fields = '__all__'
 
-
-class ProductTypeDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductType
-        exclude = ('product',)
+    expandable_fields = {
+        'product': 'products.serializers.ProductSerializer'
+    }

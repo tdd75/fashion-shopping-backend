@@ -23,8 +23,8 @@ class OauthGoogleAPIView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        services.oauth_google(**serializer.data)
-        return super().post(request, *args, **kwargs)
+        res = services.oauth_google(**serializer.data)
+        return Response(res, status=status.HTTP_200_OK)
 
 
 class OauthFacebookAPIView(TokenObtainPairView):
@@ -34,8 +34,8 @@ class OauthFacebookAPIView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        services.oauth_google(**serializer.data)
-        return super().post(request, *args, **kwargs)
+        res = services.oauth_google(**serializer.data)
+        return Response(res, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(post=extend_schema(auth=[], examples=REGISTER_EXAMPLES))

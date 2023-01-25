@@ -14,9 +14,9 @@ class OrderSerializer(serializers.ModelSerializer):
         source='cartitem_set', many=True, read_only=True)
     cart_item_ids = serializers.PrimaryKeyRelatedField(
         queryset=CartItem.objects.all(), source='cartitem_set', many=True, write_only=True)
-    # address = AddressSerializer(source='address', read_only=True)
-    # address_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Address.objects.all(), source='address', write_only=True)
+    address = AddressSerializer(read_only=True)
+    address_id = serializers.PrimaryKeyRelatedField(
+        queryset=Address.objects.all(), source='address', write_only=True)
 
     class Meta:
         model = Order

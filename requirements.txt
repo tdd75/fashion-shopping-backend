@@ -1,11 +1,13 @@
 # Django
 django
+django-cors-headers
+django-filter
 
 # Django REST
 djangorestframework
-django-cors-headers
 djangorestframework-simplejwt
-django-filter
+drf-flex-fields
+drf-extra-fields
 
 # Swagger/OpenAPI
 drf-spectacular

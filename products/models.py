@@ -6,7 +6,6 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='products')
     description = models.TextField()
-    quantity = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     feature_vector = models.BinaryField(null=True, default=None)
@@ -31,8 +30,8 @@ class Product(models.Model):
                 max(product_type.price for product_type in product_types))
 
     @property
-    def quantity(self):
-        return sum(product_type.quantity for product_type in self.producttype_set.all())
+    def stocks(self):
+        return sum(product_type.stocks for product_type in self.producttype_set.all())
 
     def __str__(self):
         return self.name

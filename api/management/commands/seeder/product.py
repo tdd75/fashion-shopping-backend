@@ -52,7 +52,7 @@ def create_products():
         product_type_dict = {
             'color': random.choice(['Red', 'Green', 'Blue', 'Yellow', 'Black', 'White', 'Orange', 'Purple']),
             'size': random.choice(['S', 'M', 'L', 'XL', 'XXL']),
-            'quantity': random.randint(0, 100),
+            'stocks': random.randint(0, 100),
             'price': random.randint(150, 1000) / 100,
             'product_id': created_product.id,
         }

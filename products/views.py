@@ -12,7 +12,7 @@ from . import services
 
 
 @extend_schema_view(list=extend_schema(auth=[]), retrieve=extend_schema(auth=[]))
-class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     permission_classes = (AllowAny,)

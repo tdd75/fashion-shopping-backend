@@ -23,7 +23,7 @@ class ProductTypeInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'rating', 'quantity', 'updated_at')
+    list_display = ('id', 'name', 'rating', 'stocks', 'updated_at')
     inlines = (ProductTypeInline,)
     form = ProductAdminForm
     ordering = ('id',)
