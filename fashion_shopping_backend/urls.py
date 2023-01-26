@@ -14,20 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
-from django.conf.urls.static import static
-import os
+from django.views.static import serve
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(f'{os.getenv("API_PREFIX")}/', include('api.urls')),
+    path(f'{settings.API_PREFIX}/', include('api.urls')),
     path('api-schema/', SpectacularAPIView.as_view(), name='api_schema'),
     path('api-docs/', SpectacularSwaggerView.as_view(url_name='api_schema'),
          name='api_docs'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
     urlpatterns.append(path('silk/', include('silk.urls', namespace='silk')))
+    urlpatterns += re_path(r'^static/(?P<path>.*)$', serve,
+                           {'document_root': settings.STATIC_ROOT}),
+    urlpatterns += re_path(r'^media/(?P<path>.*)$', serve,
+                           {'document_root': settings.MEDIA_ROOT}),

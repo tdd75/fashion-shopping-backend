@@ -32,7 +32,4 @@ requests
 # WSGI Server
 gunicorn
 
-# For serving static files
-whitenoise
-
 tqdm

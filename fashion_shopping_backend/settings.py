@@ -27,20 +27,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@qgfj76u_0q95v+s%dz)bo4)$*e@)rew$y&_#ciiy*6jgt+#p*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-DOMAIN = 'http://20.40.50.235'
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     '192.168.1.9',
-    DOMAIN,
+    '20.40.50.235',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    DOMAIN,
+    'http://20.40.50.235',
 ]
+
+API_PREFIX = os.getenv('API_PREFIX') or 'api/v1'
 
 # Application definition
 
@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'django_filters',
-    'whitenoise.runserver_nostatic',
 
     # internal apps
     'api',
@@ -85,7 +84,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 if DEBUG:
     MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
@@ -168,9 +166,6 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = 'media/'
-
-STATICFILES_STORAGE = (
-    'whitenoise.storage.CompressedManifestStaticFilesStorage')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
