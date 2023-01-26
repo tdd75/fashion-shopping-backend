@@ -28,3 +28,6 @@ urlpatterns = [
     path('api-docs/', SpectacularSwaggerView.as_view(url_name='api_schema'),
          name='api_docs'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns.append(path('silk/', include('silk.urls', namespace='silk')))

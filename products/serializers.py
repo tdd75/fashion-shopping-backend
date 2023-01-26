@@ -8,7 +8,6 @@ from api.serializers import ManyToManyUpdateFieldsMixin, ManyToManyUpdateField
 
 
 class ProductSerializer(ManyToManyUpdateFieldsMixin, FlexFieldsModelSerializer):
-    product_types = ManyToManyUpdateField(source='producttype_set')
     image = Base64ImageField()
     price_range = serializers.ListField(child=serializers.DecimalField(
         max_digits=12, decimal_places=2), read_only=True)

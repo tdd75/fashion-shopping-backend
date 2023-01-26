@@ -8,6 +8,7 @@ djangorestframework
 djangorestframework-simplejwt
 drf-flex-fields
 drf-extra-fields
+drf-writable-nested
 
 # Swagger/OpenAPI
 drf-spectacular
@@ -15,8 +16,9 @@ drf-spectacular
 # Database
 psycopg2
 
-# Debug in VSCode
+# Debug
 debugpy
+django-silk
 
 # Environment variables
 python-dotenv

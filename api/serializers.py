@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 class ManyToManyUpdateField(serializers.Serializer):
     def __init__(self, instance=None, data=..., **kwargs):
-        kwargs['required'] = False
         kwargs['write_only'] = True
         super().__init__(instance, data, **kwargs)
 

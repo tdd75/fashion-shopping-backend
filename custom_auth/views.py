@@ -45,7 +45,8 @@ class RegisterAPIView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
     def perform_create(self, serializer):
-        services.register(**serializer.data)
+        services.register(**serializer.data,
+                          password=self.request.data['password'])
 
 
 class ChangePasswordView(generics.GenericAPIView):

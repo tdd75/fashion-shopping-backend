@@ -3,11 +3,14 @@ from rest_framework.exceptions import ValidationError
 from rest_flex_fields import FlexFieldsModelSerializer
 
 from .models import CartItem
+from product_types.models import ProductType
 from product_types.serializers import ProductTypeSerializer
 
 
 class CartItemSerializer(FlexFieldsModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    product_type = serializers.PrimaryKeyRelatedField(
+        queryset=ProductType.objects.all(), write_only=True)
 
     expandable_fields = {
         'product_type': ProductTypeSerializer,

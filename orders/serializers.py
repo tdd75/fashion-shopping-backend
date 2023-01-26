@@ -1,22 +1,23 @@
 from rest_framework import serializers
+from rest_flex_fields import FlexFieldsModelSerializer
 
 from .models import Order
 from cart.models import CartItem
 from cart.serializers import CartItemSerializer
 from addresses.models import Address
 from addresses.serializers import AddressSerializer
+from api.serializers import ManyToManyUpdateField, ManyToManyUpdateFieldsMixin
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderSerializer(ManyToManyUpdateFieldsMixin, FlexFieldsModelSerializer):
     amount = serializers.DecimalField(
         max_digits=12, decimal_places=2, read_only=True)
-    cart_items = CartItemSerializer(
-        source='cartitem_set', many=True, read_only=True)
-    cart_item_ids = serializers.PrimaryKeyRelatedField(
-        queryset=CartItem.objects.all(), source='cartitem_set', many=True, write_only=True)
-    address = AddressSerializer(read_only=True)
-    address_id = serializers.PrimaryKeyRelatedField(
-        queryset=Address.objects.all(), source='address', write_only=True)
+    cart_items = ManyToManyUpdateField(source='cartitem_set')
+
+    expandable_fields = {
+        'cart_items': (CartItemSerializer, {'many': True, 'source': 'cartitem_set'}),
+        'address': AddressSerializer,
+    }
 
     class Meta:
         model = Order

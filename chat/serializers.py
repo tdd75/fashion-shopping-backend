@@ -1,9 +1,9 @@
-from rest_framework import serializers
+from rest_flex_fields import FlexFieldsModelSerializer
 
 from .models import ChatMessage
 
 
-class ChatMessageSerializer(serializers.ModelSerializer):
+class ChatMessageSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = ChatMessage
