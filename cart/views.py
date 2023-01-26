@@ -19,5 +19,6 @@ class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.Creat
         # update quantity if cart item already exists
         if existed_cart_item:
             serializer.instance = existed_cart_item
-            serializer.validated_data['quantity'] += existed_cart_item.quantity
+            serializer.validated_data['quantity'] = min(existed_cart_item.product_type.stocks,
+                                                        serializer.validated_data['quantity'] + existed_cart_item.quantity)
         serializer.save()

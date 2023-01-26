@@ -13,6 +13,3 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f'{self.product_type}_{self.quantity}'
-
-    class Meta:
-        unique_together = ('product_type', 'owner',)
