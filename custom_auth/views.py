@@ -1,13 +1,12 @@
-from rest_framework import generics, status
-from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from drf_spectacular.utils import extend_schema_view, extend_schema
-from django.contrib.auth import get_user_model
 
 from .serializers import *
 from .swagger import *
-from . import services
+from api.views import PostAPIView
 
 
 @extend_schema_view(post=extend_schema(examples=LOGIN_EXAMPLES))
@@ -16,26 +15,14 @@ class MyObtainTokenPairAPIView(TokenObtainPairView):
     serializer_class = LoginSerializer
 
 
-class OauthGoogleAPIView(TokenObtainPairView):
+class OauthGoogleAPIView(PostAPIView):
     permission_classes = (AllowAny,)
-    serializer_class = OauthTokenObtainPairSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        res = services.oauth_google(**serializer.data)
-        return Response(res, status=status.HTTP_200_OK)
+    serializer_class = OauthGoogleObtainPairSerializer
 
 
-class OauthFacebookAPIView(TokenObtainPairView):
+class OauthFacebookAPIView(PostAPIView):
     permission_classes = (AllowAny,)
-    serializer_class = OauthTokenObtainPairSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        res = services.oauth_google(**serializer.data)
-        return Response(res, status=status.HTTP_200_OK)
+    serializer_class = OauthFacebookObtainPairSerializer
 
 
 @extend_schema_view(post=extend_schema(auth=[], examples=REGISTER_EXAMPLES))
@@ -44,53 +31,25 @@ class RegisterAPIView(generics.CreateAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = RegisterSerializer
 
-    def perform_create(self, serializer):
-        services.register(**serializer.data)
 
-
-class ChangePasswordView(generics.GenericAPIView):
+class ChangePasswordView(PostAPIView):
     permission_classes = (AllowAny,)
     serializer_class = ChangePasswordSerializer
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        services.change_password(**serializer.data, user=self.request.user)
-        return Response({'message': 'Change password successfully.'}, status=status.HTTP_200_OK)
-
 
 @extend_schema_view(post=extend_schema(auth=[], examples=FORGOT_PASSWORD_EXAMPLES))
-class ForgotPasswordView(generics.GenericAPIView):
+class ForgotPasswordView(PostAPIView):
     permission_classes = (AllowAny,)
     serializer_class = ForgotPasswordSerializer
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        services.send_forgot_password_code(**serializer.data)
-        return Response({'message': 'Send email successfully.'}, status=status.HTTP_200_OK)
-
 
 @extend_schema_view(post=extend_schema(auth=[]))
-class VerifyCodeView(generics.GenericAPIView):
+class VerifyCodeView(PostAPIView):
     permission_classes = (AllowAny,)
     serializer_class = VerifyCodeSerializer
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        services.verify_code(**serializer.data)
-        return Response({'message': 'Code was verified.'}, status=status.HTTP_200_OK)
-
 
 @extend_schema_view(post=extend_schema(auth=[]))
-class RecoverPasswordView(generics.GenericAPIView):
+class RecoverPasswordView(PostAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RecoverPasswordSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        services.verify_code(**serializer.data)
-        services.recover_password(**serializer.data)
-        return Response({'message': 'Recoverd password.'}, status=status.HTTP_200_OK)

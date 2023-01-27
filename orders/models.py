@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 
 from .helpers import generate_code
+from cart.models import CartItem
+from addresses.models import Address
 from discount_tickets.models import DiscountTicket
 
 
@@ -18,12 +20,15 @@ class Order(models.Model):
                             unique=True, default=generate_code)
     stage = models.CharField(
         max_length=32, choices=Stage.choices, default=Stage.TO_PAY)
-    order_items = models.JSONField()
-    address = models.JSONField()
-    discount_ticket = models.JSONField()
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True, editable=False)
-    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    order_items = models.ManyToManyField(CartItem, blank=True)
+    address = models.ForeignKey(Address, null=True, on_delete=models.SET_NULL)
+    discount_ticket = models.ForeignKey(
+        DiscountTicket, null=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(
+        get_user_model(), null=True, on_delete=models.SET_NULL)
+    # backup_data = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def amount(self):
@@ -31,20 +36,3 @@ class Order(models.Model):
 
     def __str__(self):
         return self.code
-
-
-# class OrderItem(models.Model):
-#     size = models.CharField(max_length=16)
-#     color = models.CharField(max_length=32)
-#     quantity = models.PositiveIntegerField()
-#     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-#     product = models.ForeignKey(
-#         Product, null=True, on_delete=models.SET_NULL)
-
-#     # backup product information fields
-#     image = models.URLField()
-#     price = models.DecimalField(
-#         max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
-
-#     def __str__(self):
-#         return f'{self.order.code}_{self.product.name}_{self.size}_{self.color}'

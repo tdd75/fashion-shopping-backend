@@ -33,3 +33,6 @@ requests
 gunicorn
 
 tqdm
+
+# benchmark
+locust

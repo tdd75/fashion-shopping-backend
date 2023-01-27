@@ -144,7 +144,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'custom_users.CustomUser'
 
-FORGOT_PASSWORD_CODE_EXPIRE_MINUTES = 5
+OTP_EXPIRE_MINUTES = 5
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

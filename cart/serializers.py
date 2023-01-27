@@ -10,7 +10,7 @@ from product_types.serializers import ProductTypeSerializer
 class CartItemSerializer(FlexFieldsModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     product_type = serializers.PrimaryKeyRelatedField(
-        queryset=ProductType.objects.all(), write_only=True)
+        queryset=ProductType.objects.all())
 
     expandable_fields = {
         'product_type': ProductTypeSerializer,
@@ -21,11 +21,10 @@ class CartItemSerializer(FlexFieldsModelSerializer):
         fields = '__all__'
 
     def validate(self, attrs):
-        validated_data = super().validate(attrs)
         stocks = self.instance.product_type.stocks if self.instance \
-            else validated_data['product_type'].stocks
-        if validated_data['quantity'] > stocks:
+            else attrs['product_type'].stocks
+        if attrs['quantity'] > stocks:
             raise ValidationError({
                 'quantity': f'The quantity exceeds the available stocks ({stocks})'
             })
-        return validated_data
+        return super().validate(attrs)

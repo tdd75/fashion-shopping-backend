@@ -8,7 +8,6 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 from .models import Product
 from .serializers import *
 from .filter_set import ProductFilterSet
-from . import services
 
 
 @extend_schema_view(list=extend_schema(auth=[]), retrieve=extend_schema(auth=[]))
@@ -30,6 +29,10 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     def update_favorite(self, request, pk=None):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        services.update_favorite(**serializer.data,
-                                 product=self.get_object(), user_id=request.user.id)
+        product = self.get_object()
+        user_id = self.request.user.id
+        if serializer.data['is_favorite']:
+            product.favorited_users.add(user_id)
+        else:
+            product.favorited_users.remove(user_id)
         return Response({'message': 'Update succssfully.'}, status=status.HTTP_200_OK)

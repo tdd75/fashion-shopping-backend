@@ -35,3 +35,11 @@ class ManyToManyUpdateFieldsMixin(object):
                 instance, field).model.objects.filter(pk__in=remove_ids)
             getattr(instance, field).remove(*remove_list)
         return instance
+
+class OwnerFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def get_queryset(self):
+        request = self.context.get('request', None)
+        queryset = super(OwnerFilteredPrimaryKeyRelatedField, self).get_queryset()
+        if not request or not queryset:
+            return None
+        return queryset.filter(owner_id=request.user.id)

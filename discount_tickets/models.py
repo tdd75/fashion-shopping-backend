@@ -16,4 +16,13 @@ class DiscountTicket(models.Model):
         max_digits=12, decimal_places=2, default=0)
     start_at = models.DateTimeField(default=timezone.now)
     end_at = models.DateTimeField()
-    saved_users = models.ManyToManyField(get_user_model(), blank=True)
+    saved_users = models.ManyToManyField(
+        get_user_model(), through='TicketUserRel', blank=True)
+
+
+class TicketUserRel(models.Model):
+    discount_ticket = models.ForeignKey(
+        DiscountTicket, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
