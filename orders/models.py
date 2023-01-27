@@ -1,14 +1,9 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.utils.crypto import get_random_string
 from django.contrib.auth import get_user_model
 
-CODE_LENGTH = 8
-RANDOM_STRING_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-
-
-def generate_code():
-    return get_random_string(CODE_LENGTH, allowed_chars=RANDOM_STRING_CHARS)
+from .helpers import generate_code
+from discount_tickets.models import DiscountTicket
 
 
 class Order(models.Model):
@@ -19,14 +14,15 @@ class Order(models.Model):
         COMPLETED = 'COMPLETED', _('Completed')
         CANCELLED = 'CANCELLED', _('Cancelled')
 
-    code = models.CharField(max_length=CODE_LENGTH,
+    code = models.CharField(max_length=12,
                             unique=True, default=generate_code)
     stage = models.CharField(
         max_length=32, choices=Stage.choices, default=Stage.TO_PAY)
-    # order_items = models.JSONField()
-    # address = models.JSONField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    order_items = models.JSONField()
+    address = models.JSONField()
+    discount_ticket = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     @property

@@ -4,7 +4,6 @@ from drf_extra_fields.fields import Base64ImageField
 
 from .models import Product
 from product_types.serializers import ProductTypeSerializer
-from api.serializers import ManyToManyUpdateFieldsMixin
 
 
 class ProductSerializer(FlexFieldsModelSerializer):
@@ -22,8 +21,7 @@ class ProductSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = Product
-        exclude = ('rating_accumulate', 'rating_count', 'favorited_users')
-        read_only_fields = ('created_at', 'updated_at')
+        exclude = ('favorited_users',)
 
     def get_is_favorite(self, obj) -> bool:
         return obj.favorited_users.filter(id=self.context['request'].user.id).exists()

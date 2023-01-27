@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from django.contrib.auth import get_user_model
 
 
@@ -11,15 +12,11 @@ class Product(models.Model):
     feature_vector = models.BinaryField(null=True, default=None)
     favorited_users = models.ManyToManyField(get_user_model(), blank=True)
 
-    # supported fields for calculate average rating based on reviews
-    rating_accumulate = models.PositiveBigIntegerField(default=0)
-    rating_count = models.IntegerField(default=0)
-
     @property
     def rating(self):
-        if self.rating_count == 0:
-            return 0
-        return self.rating_accumulate / self.rating_count
+        review_count = self.review_set.count()
+        return (self.review_set.aggregate(Sum('rating')).get('rating__sum', 0) / review_count) \
+            if review_count > 0 else 0
 
     @property
     def price_range(self):
