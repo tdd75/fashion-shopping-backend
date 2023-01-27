@@ -4,10 +4,10 @@ from drf_extra_fields.fields import Base64ImageField
 
 from .models import Product
 from product_types.serializers import ProductTypeSerializer
-from api.serializers import ManyToManyUpdateFieldsMixin, ManyToManyUpdateField
+from api.serializers import ManyToManyUpdateFieldsMixin
 
 
-class ProductSerializer(ManyToManyUpdateFieldsMixin, FlexFieldsModelSerializer):
+class ProductSerializer(FlexFieldsModelSerializer):
     image = Base64ImageField()
     price_range = serializers.ListField(child=serializers.DecimalField(
         max_digits=12, decimal_places=2), read_only=True)

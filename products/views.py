@@ -31,5 +31,5 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         services.update_favorite(**serializer.data,
-                                 product=self.get_object(), user_id=request.user.idd)
+                                 product=self.get_object(), user_id=request.user.id)
         return Response({'message': 'Update succssfully.'}, status=status.HTTP_200_OK)
