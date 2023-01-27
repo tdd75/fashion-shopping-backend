@@ -15,7 +15,7 @@ def create_products():
     Product.objects.all().delete()
 
     NUM_PRODUCT = 200
-    data_path = 'api/commands/seeder/data/products/'
+    data_path = 'api/management/commands/seeder/data/products/'
 
     for file_name in tqdm(os.listdir(data_path)[:NUM_PRODUCT]):
         product_dict = {

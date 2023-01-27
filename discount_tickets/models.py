@@ -1,7 +1,7 @@
 from django.utils import timezone
-import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
 
 class DiscountTicket(models.Model):
@@ -14,11 +14,6 @@ class DiscountTicket(models.Model):
     value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     min_amount = models.DecimalField(
         max_digits=12, decimal_places=2, default=0)
-    start_date = models.DateTimeField(default=timezone.now)
-    end_date = models.DateTimeField()
-
-    def __str__(self):
-        if self.type == self.DiscountType.RAW_VALUE:
-            return f'-{self.value}_min_order_{self.min_amount}'
-        else:
-            return f'{self.value}%_min_order_{self.min_amount}'
+    start_at = models.DateTimeField(default=timezone.now)
+    end_at = models.DateTimeField()
+    saved_users = models.ManyToManyField(get_user_model(), blank=True)

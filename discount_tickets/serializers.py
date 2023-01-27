@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_flex_fields import FlexFieldsModelSerializer
 from django.core.exceptions import ValidationError
 import datetime
@@ -8,7 +9,7 @@ from .models import DiscountTicket
 class DiscountTicketSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = DiscountTicket
-        fields = '__all__'
+        exclude = ('saved_users',)
 
     def validate(self, attrs):
         if attrs['start_date'].date() < datetime.date.today():

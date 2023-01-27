@@ -21,4 +21,4 @@ class AddressViewSet(viewsets.ModelViewSet):
     def set_default(self, request, pk=None):
         services.set_default(address=self.get_object(),
                              user_id=request.user.id)
-        return Response({'message': 'Update succssfully.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Update succssful1ly.'}, status=status.HTTP_200_OK)
