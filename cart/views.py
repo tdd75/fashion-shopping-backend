@@ -7,6 +7,7 @@ from .serializers import CartItemSerializer
 class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
                                              mixins.UpdateModelMixin, mixins.DestroyModelMixin,
                                              viewsets.GenericViewSet):
+    queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
 
     def get_queryset(self):

@@ -8,6 +8,7 @@ from .swagger import ADDRESS_EXAMPLES
 
 @extend_schema_view(create=extend_schema(examples=ADDRESS_EXAMPLES))
 class AddressViewSet(viewsets.ModelViewSet):
+    queryset = Address.objects.all()
     serializer_class = AddressSerializer
     filter_backends = (
         filters.OrderingFilter,

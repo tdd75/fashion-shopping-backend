@@ -7,6 +7,7 @@ from .serializers import OrderSerializer
 
 class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
                                    mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_backends = (
         DjangoFilterBackend,
