@@ -2,14 +2,14 @@ from rest_framework import serializers
 from rest_flex_fields import FlexFieldsModelSerializer
 from datetime import datetime
 
-from .models import Order
+from api.serializers import OwnerFilteredPrimaryKeyRelatedField
 from cart.models import CartItem
 from cart.serializers import CartItemSerializer
 from addresses.models import Address
 from addresses.serializers import AddressSerializer
 from discount_tickets.models import DiscountTicket
 from discount_tickets.serializers import DiscountTicketSerializer
-from api.serializers import OwnerFilteredPrimaryKeyRelatedField
+from .models import Order
 
 
 class OrderSerializer(FlexFieldsModelSerializer):
@@ -45,29 +45,3 @@ class OrderSerializer(FlexFieldsModelSerializer):
             raise serializers.ValidationError('This ticket is expired')
 
         return value
-
-    def save(self, **kwargs):
-        # TODO: Implement backup data logic for order
-        # data = self.validated_data
-        # backup_data = {}
-
-        # def omit_state_dict(data):
-        #     data.pop('_state', None)
-        #     return data
-
-        # for field in ['discount_ticket', 'owner']:
-        #     if data.get(field):
-        #         backup_data[field] = omit_state_dict(data[field].__dict__)
-        # if data.get('order_items'):
-        #     backup_data['order_items'] = [
-        #         omit_state_dict(cart_item.__dict__) for cart_item in data['order_items']]
-
-        # if backup_data:
-        #     kwargs['backup_data'] = backup_data
-        # kwargs['backup_data'] = {
-        #     'id': 1,
-        #     'address': {
-        #         'city': 'Hanoi'
-        #     },
-        # }
-        return super().save(**kwargs)

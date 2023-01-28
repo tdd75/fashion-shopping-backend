@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'django_filters',
+    'safedelete',
 
     # internal apps
     'api',
@@ -184,6 +185,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    'EXCEPTION_HANDLER': 'api.exceptions.django_error_handler',
     'COERCE_DECIMAL_TO_STRING': False,
 }
 

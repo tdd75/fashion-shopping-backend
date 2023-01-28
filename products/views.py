@@ -13,7 +13,7 @@ from .filter_set import ProductFilterSet
 @extend_schema_view(list=extend_schema(auth=[]), retrieve=extend_schema(auth=[]))
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().prefetch_related('producttype_set')
     permission_classes = (AllowAny,)
     filter_backends = (
         DjangoFilterBackend,
@@ -29,10 +29,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     def update_favorite(self, request, pk=None):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        product = self.get_object()
-        user_id = self.request.user.id
-        if serializer.data['is_favorite']:
-            product.favorited_users.add(user_id)
-        else:
-            product.favorited_users.remove(user_id)
+        instace = self.get_object()
+        instace.update_is_favorite(
+            self.request.user.id, serializer.validated_data['is_favorite'])
         return Response({'message': 'Update succssfully.'}, status=status.HTTP_200_OK)

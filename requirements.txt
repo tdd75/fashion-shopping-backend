@@ -2,6 +2,7 @@
 django
 django-cors-headers
 django-filter
+django-safedelete
 
 # Django REST
 djangorestframework
@@ -32,7 +33,6 @@ requests
 # WSGI Server
 gunicorn
 
-tqdm
-
 # benchmark
 locust
+tqdm

@@ -9,7 +9,7 @@ from .models import ProductType
 
 @extend_schema_view(list=extend_schema(auth=[]))
 class ProductTypeViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = ProductType.objects.all()
+    queryset = ProductType.objects.all().select_related('product')
     serializer_class = ProductTypeSerializer
     permission_classes = (AllowAny,)
     filter_backends = (

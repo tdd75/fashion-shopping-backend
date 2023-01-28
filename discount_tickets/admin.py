@@ -10,8 +10,7 @@ class DiscountTicketAdminForm(ModelForm):
 
 
 class DiscountTicketAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type', 'value',
-                    'min_amount', 'start_at', 'end_at')
+    list_display = ('id', 'percent', 'min_amount', 'start_at', 'end_at')
     ordering = ('id',)
     form = DiscountTicketAdminForm
 

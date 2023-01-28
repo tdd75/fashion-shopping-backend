@@ -16,4 +16,9 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
     search_fields = ('code',)
 
     def get_queryset(self):
-        return Order.objects.filter(owner_id=self.request.user.id)
+        return Order.objects.has_owned(self.request.user.id) \
+            .select_related('address', 'discount_ticket').prefetch_related('order_items')
+
+    def create(self, request, *args, **kwargs):
+        instance = super().create(request, *args, **kwargs)
+        return instance

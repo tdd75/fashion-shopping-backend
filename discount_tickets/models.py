@@ -1,26 +1,26 @@
-from django.utils import timezone
-from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
+from django.utils import timezone
+
+from api.models import models, BaseModel
+from .managers import DiscountTicketManager, DiscountTicketQuerySet
 
 
-class DiscountTicket(models.Model):
-    class DiscountType(models.TextChoices):
-        RAW_VALUE = 'RAW_VALUE', _('Raw value')
-        PERCENT = 'PERCENT', _('Percent')
-
-    type = models.CharField(
-        max_length=16, choices=DiscountType.choices, default=DiscountType.RAW_VALUE)
-    value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+class DiscountTicket(BaseModel):
+    percent = models.IntegerField(
+        validators=[MinValueValidator(1), MinValueValidator(99)])
     min_amount = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0)
+        max_digits=12, decimal_places=2, null=True)
     start_at = models.DateTimeField(default=timezone.now)
     end_at = models.DateTimeField()
     saved_users = models.ManyToManyField(
         get_user_model(), through='TicketUserRel', blank=True)
 
+    objects = DiscountTicketManager.from_queryset(DiscountTicketQuerySet)()
 
-class TicketUserRel(models.Model):
+
+class TicketUserRel(BaseModel):
     discount_ticket = models.ForeignKey(
         DiscountTicket, on_delete=models.CASCADE)
     user = models.ForeignKey(
