@@ -1,11 +1,11 @@
-from safedelete.managers import SafeDeleteManager, SafeDeleteQueryset
+from django.db import models
 
 
-class OrderQuerySet(SafeDeleteQueryset):
+class OrderQuerySet(models.QuerySet):
     def has_owned(self, user_id):
         return self.filter(owner_id=user_id)
 
 
-class OrderManager(SafeDeleteManager):
+class OrderManager(models.Manager):
     def clean_items_in_cart(self):
         pass

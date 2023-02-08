@@ -21,16 +21,19 @@ from django.views.static import serve
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
+    path('admin/', include('custom_admin.urls')),
     path('admin/', admin.site.urls),
-    path(f'{settings.API_PREFIX}/', include('api.urls')),
+    path(settings.API_PREFIX, include('api.urls')),
     path('api-schema/', SpectacularAPIView.as_view(), name='api_schema'),
     path('api-docs/', SpectacularSwaggerView.as_view(url_name='api_schema'),
          name='api_docs'),
 ]
 
 if settings.DEBUG:
-    urlpatterns.append(path('silk/', include('silk.urls', namespace='silk')))
-    urlpatterns += re_path(r'^static/(?P<path>.*)$', serve,
-                           {'document_root': settings.STATIC_ROOT}),
-    urlpatterns += re_path(r'^media/(?P<path>.*)$', serve,
-                           {'document_root': settings.MEDIA_ROOT}),
+    urlpatterns.extend([
+        path('silk/', include('silk.urls', namespace='silk')),
+        re_path(r'^static/(?P<path>.*)$', serve,
+                {'document_root': settings.STATIC_ROOT}),
+        re_path(r'^media/(?P<path>.*)$', serve,
+                {'document_root': settings.MEDIA_ROOT}),
+    ])

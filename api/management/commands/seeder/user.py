@@ -7,11 +7,13 @@ def create_users():
 
     admin_info = {
         'username': 'admin',
+        'first_name': 'Admin',
         'email': 'admin@gmail.com',
         'password': 'admin',
     }
     bot_info = {
         'username': 'bot',
+        'first_name': 'Bot',
         'email': 'bot@gmail.com',
         'password': 'bot',
     }

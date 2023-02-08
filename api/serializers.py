@@ -37,11 +37,10 @@ class ManyToManyUpdateFieldsMixin(object):
         return instance
 
 
-class OwnerFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+class OwnedPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     def get_queryset(self):
         request = self.context.get('request', None)
-        queryset = super(OwnerFilteredPrimaryKeyRelatedField,
-                         self).get_queryset()
-        if not request or not queryset:
-            return None
-        return queryset.has_owned(request.user.id)
+        queryset = super(OwnedPrimaryKeyRelatedField, self).get_queryset()
+        if request:
+            return queryset.has_owned(request.user.id)
+        return queryset

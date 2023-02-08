@@ -7,5 +7,7 @@ class Command(BaseCommand):
     help = 'Deploy with gunicorn'
 
     def handle(self, *args, **kwargs):
+        # os.system(
+        #     'gunicorn fashion_shopping_backend.wsgi -c fashion_shopping_backend/gunicorn.conf.py')
         os.system(
-            'gunicorn fashion_shopping_backend.wsgi -c fashion_shopping_backend/gunicorn.conf.py')
+            'daphne -b 0.0.0.0 fashion_shopping_backend.asgi:application')

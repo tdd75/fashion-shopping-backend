@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import datetime
 import os
 from pathlib import Path
+from django.utils import timezone
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -30,21 +30,28 @@ SECRET_KEY = 'django-insecure-@qgfj76u_0q95v+s%dz)bo4)$*e@)rew$y&_#ciiy*6jgt+#p*
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '*',
     '127.0.0.1',
     'localhost',
-    '192.168.1.9',
+    '192.168.1.3',
     '20.40.50.235',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://20.40.50.235',
 ]
 
-API_PREFIX = os.getenv('API_PREFIX') or 'api/v1'
+API_PREFIX = os.getenv('API_PREFIX') or 'api/v1/'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    # 'admin_soft.apps.AdminSoftDashboardConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,15 +65,18 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'django_filters',
-    'safedelete',
+    'corsheaders',
+    'django_celery_results',
 
     # internal apps
     'api',
     'custom_users',
     'custom_auth',
+    'custom_admin',
     'addresses',
     'products',
-    'product_types',
+    'product_variants',
+    'product_categories',
     'reviews',
     'cart',
     'orders',
@@ -80,14 +90,18 @@ if DEBUG:
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 if DEBUG:
-    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+    MIDDLEWARE.extend([
+        'silk.middleware.SilkyMiddleware',
+    ])
 
 ROOT_URLCONF = 'fashion_shopping_backend.urls'
 
@@ -107,8 +121,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'fashion_shopping_backend.wsgi.application'
+# WSGI_APPLICATION = 'fashion_shopping_backend.wsgi.application'
+ASGI_APPLICATION = 'fashion_shopping_backend.asgi.application'
 
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('0.0.0.0', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -191,10 +215,10 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ['Bearer'],
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=7),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=30)
-    # 'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
-    # 'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1)
+    'ACCESS_TOKEN_LIFETIME': timezone.timedelta(days=7),
+    'REFRESH_TOKEN_LIFETIME': timezone.timedelta(days=30)
+    # 'ACCESS_TOKEN_LIFETIME': timezone.timedelta(minutes=30),
+    # 'REFRESH_TOKEN_LIFETIME': timezone.timedelta(days=1)
 }
 
 SPECTACULAR_SETTINGS = {
@@ -202,7 +226,7 @@ SPECTACULAR_SETTINGS = {
     # 'DESCRIPTION': '',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'SCHEMA_PATH_PREFIX': f'/{os.getenv("API_PREFIX")}',
+    'SCHEMA_PATH_PREFIX': '/' + API_PREFIX,
     'SWAGGER_UI_DIST': '//unpkg.com/swagger-ui-dist@latest',
     'COMPONENT_SPLIT_REQUEST': True,
     'SWAGGER_UI_SETTINGS': {
@@ -243,3 +267,7 @@ LOGGING = {
         },
     },
 }
+
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'

@@ -1,10 +1,9 @@
 from rest_framework import serializers
 from rest_flex_fields import FlexFieldsModelSerializer
 from django.core.exceptions import ValidationError
-import datetime
+from django.utils import timezone
 
 from .models import DiscountTicket
-
 
 class DiscountTicketSerializer(FlexFieldsModelSerializer):
     class Meta:
@@ -12,7 +11,7 @@ class DiscountTicketSerializer(FlexFieldsModelSerializer):
         exclude = ('saved_users',)
 
     def validate(self, attrs):
-        if attrs['start_date'].date() < datetime.date.today():
+        if attrs['start_date'].date() < timezone.date.today():
             raise ValidationError("Start date cannot be in the past!")
         if attrs['start_date'] > attrs['end_date']:
             raise ValidationError("End date cannot be before start date!")

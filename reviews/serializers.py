@@ -6,9 +6,13 @@ from custom_users.serializers import UserShortSerializer
 
 
 class ReviewSerializer(FlexFieldsModelSerializer):
-    owner = UserShortSerializer(
-        write_only=True, default=serializers.CurrentUserDefault())
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    expandable_fields = {
+        'owner': UserShortSerializer,
+    }
 
     class Meta:
         model = Review
         fields = '__all__'
+        read_only_fields = ('product',)

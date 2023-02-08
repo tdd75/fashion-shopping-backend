@@ -15,6 +15,18 @@ class LoginSerializer(TokenObtainPairSerializer):
     username_field = 'identify'
 
 
+class AdminLoginSerializer(TokenObtainPairSerializer):
+    identify = serializers.CharField(allow_null=False)
+    username_field = 'identify'
+
+    def validate_identify(self, value):
+        user = get_user_model().objects.filter(
+            (Q(email=value) | Q(username=value) | Q(phone=value)) & Q(is_superuser=True)).first()
+        if not user:
+            raise ValidationError(f'Identify or password is not correct.')
+        return value
+
+
 class OauthTokenObtainPairSerializer(serializers.Serializer):
     token = serializers.CharField()
 

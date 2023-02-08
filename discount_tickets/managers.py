@@ -1,9 +1,11 @@
-from safedelete.managers import SafeDeleteManager, SafeDeleteQueryset
+from django.db import models
+from django.utils import timezone
 
 
-class DiscountTicketQuerySet(SafeDeleteQueryset):
-    pass
+class DiscountTicketQuerySet(models.QuerySet):
+    def is_unexpired(self):
+        return self.filter(end_at__gte=timezone.now().isoformat())
 
 
-class DiscountTicketManager(SafeDeleteManager):
+class DiscountTicketManager(models.Manager):
     pass

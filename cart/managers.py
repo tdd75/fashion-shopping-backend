@@ -1,16 +1,16 @@
-from safedelete.managers import SafeDeleteManager, SafeDeleteQueryset
+from django.db import models
 
 
-class CartQuerySet(SafeDeleteQueryset):
+class CartQuerySet(models.QuerySet):
     def has_owned(self, user_id):
         return self.filter(owner_id=user_id)
 
-    def is_ordered(self):
-        return self.filter(is_ordered=True)
+    def is_ordered(self, value):
+        return self.filter(order__isnull=not value)
 
-    def get_by_product_type_id(self, id):
-        return self.filter(product_type_id=id).first()
+    def get_by_product_variant_id(self, id):
+        return self.filter(product_variant_id=id).first()
 
 
-class CartManager(SafeDeleteManager):
+class CartManager(models.Manager):
     pass

@@ -15,3 +15,7 @@ media
 
 # seeding data
 api/management/commands/seeder/data
+
+tmp
+
+celerybeat-schedule

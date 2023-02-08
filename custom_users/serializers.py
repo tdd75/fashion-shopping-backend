@@ -16,4 +16,13 @@ class UserSerializer(FlexFieldsModelSerializer):
 class UserShortSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'full_name')
+        fields = ('id', 'full_name', 'avatar')
+
+
+class UserAdminSerializer(FlexFieldsModelSerializer):
+    full_name = serializers.CharField(read_only=True)
+    avatar = Base64ImageField()
+
+    class Meta:
+        model = get_user_model()
+        exclude = ('password',)

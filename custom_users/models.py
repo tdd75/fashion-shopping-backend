@@ -7,20 +7,11 @@ from .managers import CustomUserManager, CustomUserQuerySet
 
 
 class CustomUser(BaseModel, AbstractUser):
-    email = models.EmailField(_('email'))
+    email = models.EmailField(_('email'), unique=True)
     phone = models.CharField(max_length=20, blank=True, null=True, unique=True)
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
 
     objects = CustomUserManager.from_queryset(CustomUserQuerySet)()
-
-    class Meta:
-        constraints = [
-            UniqueConstraint(
-                fields=('email',),
-                condition=Q(deleted__isnull=True),
-                name='unique_email'
-            ),
-        ]
 
     @property
     def full_name(self) -> str:

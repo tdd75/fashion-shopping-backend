@@ -1,5 +1,4 @@
 
-from django.core.files.images import ImageFile
 from django.core.files.base import File
 
 import os
@@ -7,11 +6,29 @@ from urllib.parse import urljoin
 from tqdm import tqdm
 import random
 
-from product_types.models import ProductType
+from product_variants.models import ProductVariant
 from products.models import Product
+from product_categories.models import ProductCategory
+
+
+def create_product_categories():
+    ProductCategory.objects.all().delete()
+
+    categories = ['Topwear', 'Bottomwear', 'Watches', 'Socks', 'Shoes', 'Belts', 'Flip Flops',
+                  'Bags', 'Innerwear', 'Sandal', 'Shoe Accessories', 'Fragrance', 'Jewellery',
+                  'Lips', 'Saree', 'Eyewear', 'Nails', 'Scarves', 'Dress',
+                  'Loungewear and Nightwear', 'Wallets', 'Apparel Set', 'Headwear', 'Mufflers',
+                  'Skin Care', 'Makeup', 'Free Gifts', 'Ties', 'Accessories', 'Skin',
+                  'Beauty Accessories', 'Water Bottle', 'Eyes', 'Bath and Body', 'Gloves',
+                  'Sports Accessories', 'Cufflinks', 'Sports Equipment', 'Stoles', 'Hair',
+                  'Perfumes', 'Home Furnishing', 'Umbrellas', 'Wristbands', 'Vouchers']
+    for category in categories:
+        ProductCategory.objects.create(name=category)
 
 
 def create_products():
+    create_product_categories()
+    category_ids = ProductCategory.objects.values_list('id', flat=True)
     Product.objects.all().delete()
 
     NUM_PRODUCT = 200
@@ -46,14 +63,15 @@ def create_products():
                 Proin condimentum malesuada mauris quis posuere. Maecenas vel ante ac elit tincidunt hendrerit. In pretium vitae magna a porta. Mauris nec eros sit amet enim luctus eleifend. Aliquam pellentesque malesuada porta. Suspendisse vel augue urna. Cras hendrerit magna ac rhoncus blandit. Morbi eu suscipit sapien. Quisque.
             ''',
             'image': File(open(urljoin(data_path, file_name), "rb"), name=file_name),
+            'category_id': random.choice(category_ids),
         }
 
         created_product = Product.objects.create(**product_dict)
-        product_type_dict = {
+        product_variant_dict = {
             'color': random.choice(['Red', 'Green', 'Blue', 'Yellow', 'Black', 'White', 'Orange', 'Purple']),
             'size': random.choice(['S', 'M', 'L', 'XL', 'XXL']),
             'stocks': random.randint(0, 100),
             'price': random.randint(150, 1000) / 100,
             'product_id': created_product.id,
         }
-        ProductType.objects.create(**product_type_dict)
+        ProductVariant.objects.create(**product_variant_dict)

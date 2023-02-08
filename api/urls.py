@@ -5,12 +5,13 @@ urlpatterns = [
     path('users/', include('custom_users.urls')),
     path('addresses/', include('addresses.urls')),
     path('products/', include('products.urls')),
-    path('product-types/', include('product_types.urls')),
+    path('product-types/', include('product_variants.urls')),
     path('reviews/', include('reviews.urls')),
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
     path('discount-tickets/', include('discount_tickets.urls')),
     path('chat/', include('chat.urls')),
+    path('transactions/', include('transactions.urls')),
 ]
 
 handler500 = 'rest_framework.exceptions.server_error'

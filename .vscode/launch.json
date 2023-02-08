@@ -9,8 +9,8 @@
       "type": "python",
       "request": "attach",
       "port": 9999,
-      "host": "localhost"
-      // "justMyCode": false
+      "host": "localhost",
+      "justMyCode": false
     }
   ]
 }

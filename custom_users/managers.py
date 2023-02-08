@@ -1,16 +1,15 @@
-from django.contrib.auth.base_user import BaseUserManager
-from safedelete.managers import SafeDeleteManager, SafeDeleteQueryset
+from django.db import models
 from django.utils.translation import gettext as _
-
+from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 
 
-class CustomUserQuerySet(SafeDeleteQueryset, models.QuerySet):
+class CustomUserQuerySet(models.QuerySet):
     def get_by_email(self, email):
         return self.filter(email=email).first()
 
 
-class CustomUserManager(SafeDeleteManager, BaseUserManager):
+class CustomUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifier
     for authentication instead of usernames.

@@ -11,9 +11,15 @@ from .swagger import *
 
 
 @extend_schema_view(post=extend_schema(examples=LOGIN_EXAMPLES))
-class MyObtainTokenPairAPIView(TokenObtainPairView):
+class LoginAPIView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
+
+
+@extend_schema_view(post=extend_schema(examples=ADMIN_LOGIN_EXAMPLES))
+class AdminLoginAPIView(TokenObtainPairView):
+    permission_classes = (AllowAny,)
+    serializer_class = AdminLoginSerializer
 
 
 class OauthGoogleAPIView(generics.GenericAPIView):
@@ -59,9 +65,9 @@ class RegisterAPIView(generics.CreateAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
 
-        get_user_model().objects.create_user(
-            serializer.validated_data['email'], serializer.validated_data['password'])
+        get_user_model().objects.create_user(data['email'], data['password'])
 
         return Response({'message': 'Register successfully'}, status=status.HTTP_201_CREATED)
 
@@ -120,10 +126,10 @@ class RecoverPasswordView(PostAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
 
-        user = get_user_model().objects.get_by_email(
-            serializer.validated_data['email'])
-        user.change_password(serializer.validated_data['new_password'])
+        user = get_user_model().objects.get_by_email(data['email'])
+        user.change_password(data['new_password'])
 
         return Response({
             'message': 'Password changed successfully'

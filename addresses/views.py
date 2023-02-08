@@ -17,4 +17,4 @@ class AddressViewSet(viewsets.ModelViewSet):
     ordering = ('-is_default', 'id')
 
     def get_queryset(self):
-        return Address.objects.filter(owner_id=self.request.user.id)
+        return Address.objects.has_owned(self.request.user.id)

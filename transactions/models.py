@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from api.models import models, BaseModel
 from orders.models import Order
@@ -7,13 +8,14 @@ from .managers import TransactionManager, TransactionQuerySet
 
 
 class Transaction(BaseModel):
-    amount = models.CharField(max_length=32)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    amount = models.DecimalField(
-        max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    payment_link = models.URLField()
+    check_payment_link = models.URLField()
+    paid_amount = models.DecimalField(
+        max_digits=12, decimal_places=2, validators=[MinValueValidator(0)], null=True, default=None)
+    paid_at = models.DateTimeField(null=True, default=None)
 
     objects = TransactionManager.from_queryset(TransactionQuerySet)()
 
     def __str__(self):
-        return f'{self.order.code}_{self.amount}'
+        return f'{self.order.code}'

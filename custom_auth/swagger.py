@@ -2,13 +2,6 @@ from drf_spectacular.utils import OpenApiExample
 
 LOGIN_EXAMPLES = [
     OpenApiExample(
-        'Admin account',
-        value={
-            'identify': 'admin',
-            'password': 'admin',
-        },
-    ),
-    OpenApiExample(
         'Customer account',
         value={
             'identify': 'tranducduy7520@gmail.com',
@@ -37,5 +30,15 @@ FORGOT_PASSWORD_EXAMPLES = [
         value={
             'email': 'tranducduy7520@gmail.com',
         }
+    ),
+]
+
+ADMIN_LOGIN_EXAMPLES = [
+    OpenApiExample(
+        'Admin account',
+        value={
+            'identify': 'admin',
+            'password': 'admin',
+        },
     ),
 ]

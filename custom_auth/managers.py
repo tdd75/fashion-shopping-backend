@@ -1,18 +1,17 @@
-from safedelete.managers import SafeDeleteManager, SafeDeleteQueryset
-from django.utils import timezone
-from django.utils.crypto import get_random_string
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import update_last_login
-from django.conf import settings
-from django.core.mail import send_mail
-
-from rest_framework_simplejwt.settings import api_settings
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.exceptions import AuthenticationFailed
 import requests
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.settings import api_settings
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.models import update_last_login
+from django.contrib.auth import get_user_model
+from django.utils.crypto import get_random_string
+from django.utils import timezone
+from django.db import models
 
 
-class ForgotPasswordQuerySet(SafeDeleteQueryset):
+class ForgotPasswordQuerySet(models.QuerySet):
     def get_valid_record(self, email, code):
         return self.filter(
             user__email=email, code=code,
@@ -20,7 +19,7 @@ class ForgotPasswordQuerySet(SafeDeleteQueryset):
         ).first()
 
 
-class ForgotPasswordManager(SafeDeleteManager):
+class ForgotPasswordManager(models.Manager):
     def _trigger_oauth_login(self, user_info):
         user = get_user_model().objects.filter(
             email=user_info['email']).first()

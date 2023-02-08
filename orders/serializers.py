@@ -1,8 +1,9 @@
+from typing import List
 from rest_framework import serializers
 from rest_flex_fields import FlexFieldsModelSerializer
-from datetime import datetime
+from django.utils import timezone
 
-from api.serializers import OwnerFilteredPrimaryKeyRelatedField
+from api.serializers import OwnedPrimaryKeyRelatedField
 from cart.models import CartItem
 from cart.serializers import CartItemSerializer
 from addresses.models import Address
@@ -13,18 +14,23 @@ from .models import Order
 
 
 class OrderSerializer(FlexFieldsModelSerializer):
+    order_items = OwnedPrimaryKeyRelatedField(
+        queryset=CartItem.objects.is_ordered(False), source='cartitem_set', many=True)
+    address = OwnedPrimaryKeyRelatedField(
+        queryset=Address.objects.all())
+    discount_ticket = serializers.PrimaryKeyRelatedField(
+        queryset=DiscountTicket.objects.all(), required=False, allow_null=True)
+    discount = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
+    subtotal = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
     amount = serializers.DecimalField(
         max_digits=12, decimal_places=2, read_only=True)
+    paid_at = serializers.DateTimeField(read_only=True)
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    cart_items = OwnerFilteredPrimaryKeyRelatedField(
-        queryset=CartItem.objects, source='order_items', many=True)
-    address = OwnerFilteredPrimaryKeyRelatedField(
-        queryset=Address.objects)
-    discount_ticket = serializers.PrimaryKeyRelatedField(
-        queryset=DiscountTicket.objects.all(), required=False)
 
     expandable_fields = {
-        'cart_items': (CartItemSerializer, {'many': True, 'source': 'order_items'}),
+        'order_items': (CartItemSerializer, {'source': 'cartitem_set', 'many': True}),
         'address': AddressSerializer,
         'discount_ticket': DiscountTicketSerializer,
     }
@@ -32,16 +38,18 @@ class OrderSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
-        read_only_fields = ('code', 'order_items')
+        read_only_fields = ('code', 'order_items', 'stage')
 
     def validate_discount_ticket(self, value):
-        ticket_rel = value.ticketuserrel_set.filter(
-            user_id=self.context['request'].user.id).first()
-        if not ticket_rel:
-            raise serializers.ValidationError('You do not have this ticket')
-        elif ticket_rel.is_active == False:
-            raise serializers.ValidationError('You used this ticket')
-        elif value.end_at < datetime.now():
-            raise serializers.ValidationError('This ticket is expired')
+        if hasattr(value, 'ticketuserrel_set'):
+            ticket_rel = value.ticketuserrel_set.filter(
+                user_id=self.context['request'].user.id).first()
+            if not ticket_rel:
+                raise serializers.ValidationError(
+                    'You do not have this ticket')
+            if ticket_rel.is_active == False:
+                raise serializers.ValidationError('You used this ticket')
+            if value.end_at < timezone.now():
+                raise serializers.ValidationError('This ticket is expired')
 
         return value
