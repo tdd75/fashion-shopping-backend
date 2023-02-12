@@ -1,21 +1,14 @@
-# environment variables
 .env
+.env.dev
 
-# virtual environment
 venv
 
-# cache files
 __pycache__
 
-# static files
-static
+static/*
 
-# media files
-media
+media/*
 
-# seeding data
 api/management/commands/seeder/data
-
-tmp
 
 celerybeat-schedule

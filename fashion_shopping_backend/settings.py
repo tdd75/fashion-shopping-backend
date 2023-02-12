@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@qgfj76u_0q95v+s%dz)bo4)$*e@)rew$y&_#ciiy*6jgt+#p*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') or True
 
 ALLOWED_HOSTS = [
     '*',
@@ -42,7 +42,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://20.40.50.235',
+    'http://localhost:8000',
+    'http://20.40.50.235:8000',
 ]
 
 API_PREFIX = os.getenv('API_PREFIX') or 'api/v1/'
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'django_celery_results',
+    'computedfields',
 
     # internal apps
     'api',
@@ -129,7 +131,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [('0.0.0.0', 6379)],
+            "hosts": [('redis', 6379)],
         },
     },
 }
@@ -190,7 +192,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = 'media/'
+MEDIA_URL = f"http://{str(os.getenv('DOMAIN'))}/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -269,5 +271,5 @@ LOGGING = {
 }
 
 # Celery
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'

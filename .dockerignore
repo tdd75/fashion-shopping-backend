@@ -1,0 +1,13 @@
+# virtual environment
+venv
+
+# cache files
+__pycache__
+
+# static files
+static/*
+
+# media files
+media/*
+
+celerybeat-schedule

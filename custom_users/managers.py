@@ -5,7 +5,7 @@ from django.db import models
 
 
 class CustomUserQuerySet(models.QuerySet):
-    def get_by_email(self, email):
+    def by_email(self, email):
         return self.filter(email=email).first()
 
 

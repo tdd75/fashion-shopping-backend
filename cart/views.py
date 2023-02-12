@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets, filters
+from rest_framework import mixins, viewsets
 
 from .models import CartItem
 from .serializers import CartItemSerializer
@@ -9,9 +9,6 @@ class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.Creat
                                              viewsets.GenericViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-    filter_backends = (
-        filters.OrderingFilter,
-    )
     ordering=('-created_at',)
 
     def get_queryset(self):
@@ -20,7 +17,7 @@ class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.Creat
 
     def perform_create(self, serializer):
         data = serializer.validated_data
-        existed_cart_item = self.get_queryset().get_by_product_variant_id(
+        existed_cart_item = self.get_queryset().by_product_variant_id(
             data['product_variant'].id)
         # update quantity if product type already exists in the cart
         if existed_cart_item:

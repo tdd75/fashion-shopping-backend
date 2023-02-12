@@ -1,4 +1,5 @@
 from rest_framework import mixins, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny
 from drf_spectacular.utils import extend_schema_view, extend_schema
 
@@ -10,6 +11,10 @@ from .serializers import ReviewSerializer
 class ReviewListCreateViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Review.objects.all().select_related('owner')
     serializer_class = ReviewSerializer
+    filter_backends = (
+        DjangoFilterBackend,
+    )
+    filterset_fields = ('product',)
 
     def get_permissions(self):
         if self.request.method == 'GET':

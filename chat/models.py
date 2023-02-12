@@ -11,6 +11,7 @@ class ChatMessage(BaseModel):
         get_user_model(), on_delete=models.CASCADE, related_name='receiver')
     sender = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE, related_name='sender')
+    is_last_message = models.BooleanField(default=False)
 
     objects = ChatManager.from_queryset(ChatQuerySet)()
 

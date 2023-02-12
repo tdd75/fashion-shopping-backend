@@ -21,7 +21,7 @@ class AdminLoginSerializer(TokenObtainPairSerializer):
 
     def validate_identify(self, value):
         user = get_user_model().objects.filter(
-            (Q(email=value) | Q(username=value) | Q(phone=value)) & Q(is_superuser=True)).first()
+            (Q(email=value) | Q(username=value) | Q(phone=value)) & Q(is_superuser=True)).exists()
         if not user:
             raise ValidationError(f'Identify or password is not correct.')
         return value

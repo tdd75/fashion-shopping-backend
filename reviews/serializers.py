@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from rest_flex_fields import FlexFieldsModelSerializer
 
-from .models import Review
 from custom_users.serializers import UserShortSerializer
+from product_variants.serializers import ProductVariantSerializer
+from .models import Review
 
 
 class ReviewSerializer(FlexFieldsModelSerializer):
@@ -10,6 +11,7 @@ class ReviewSerializer(FlexFieldsModelSerializer):
 
     expandable_fields = {
         'owner': UserShortSerializer,
+        'variant': ProductVariantSerializer
     }
 
     class Meta:

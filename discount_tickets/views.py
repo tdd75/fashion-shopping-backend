@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from .models import DiscountTicket
 from .serializers import DiscountTicketSerializer
-from .filterset import DiscountTicketFilterSet
+from .filter_set import DiscountTicketFilterSet
 
 
 @extend_schema_view(save_ticket=extend_schema(request=None))

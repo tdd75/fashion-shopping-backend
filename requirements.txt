@@ -8,6 +8,7 @@ channels-redis
 celery
 django-celery-results
 django-crontab
+django-computedfields
 
 # Django REST
 djangorestframework
@@ -34,9 +35,6 @@ Pillow
 
 # For calling external APIs
 requests
-
-# WSGI Server
-gunicorn
 
 # benchmark
 locust

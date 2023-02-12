@@ -8,8 +8,15 @@
       "name": "Python: Django",
       "type": "python",
       "request": "attach",
-      "port": 9999,
+      "port": 8000,
+      "debugServer": 9999,
       "host": "localhost",
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/app/web"
+        }
+      ],
       "justMyCode": false
     }
   ]

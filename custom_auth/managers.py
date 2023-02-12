@@ -2,21 +2,22 @@ import requests
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.settings import api_settings
-from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import update_last_login
 from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.db import models
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 
 class ForgotPasswordQuerySet(models.QuerySet):
-    def get_valid_record(self, email, code):
+    def is_valid_record(self, email, code):
         return self.filter(
             user__email=email, code=code,
             expired_at__gte=timezone.now().isoformat()
-        ).first()
+        ).exists()
 
 
 class ForgotPasswordManager(models.Manager):
@@ -60,8 +61,13 @@ class ForgotPasswordManager(models.Manager):
 
     def send_otp(self, email):
         code = get_random_string(length=6, allowed_chars='0123456789')
-        send_mail(f'Forgot password', f'{code}', None,
-                  [email], fail_silently=False)
+        html_content = render_to_string(
+            'email/forgot-password.html', {'code': code})
+
+        msg = EmailMultiAlternatives(subject='Forgot password', to=[email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
         self.create(code=code,
-                    user=get_user_model().objects.get_by_email(email),
+                    user=get_user_model().objects.by_email(email),
                     expired_at=timezone.now() + timezone.timedelta(minutes=settings.OTP_EXPIRE_MINUTES))

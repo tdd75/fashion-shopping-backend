@@ -24,8 +24,7 @@ class DiscountTicket(BaseModel):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=Q(start_at__lte=F('end_at'),
-                        start_at__gte=Now()),
+                check=Q(start_at__lte=F('end_at')),
                 name='correct_datetime'
             ),
         ]

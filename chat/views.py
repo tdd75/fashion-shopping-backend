@@ -1,34 +1,44 @@
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, mixins, generics, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser
+from django.contrib.auth import get_user_model
 
-from .serializers import ChatMessageSerializer
+from .serializers import ChatSerializer, ChatConversationListSerializer
 from .models import ChatMessage
 
 
-class ChatMessageViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class ChatViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = ChatMessage.objects.all().select_related('receiver', 'sender')
-    serializer_class = ChatMessageSerializer
-    filter_backends = (
-        filters.OrderingFilter,
-    )
+    serializer_class = ChatSerializer
     ordering = ('-created_at',)
 
     def get_queryset(self):
         return ChatMessage.objects.has_owned(self.request.user.id)
 
-    # def create(self, request):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     data = serializer.validated_data
+    @action(detail=False, methods=['get'], url_path='admin-info')
+    def get_admin_info(self, request, *args, **kwargs):
+        admin = get_user_model().objects.filter(username='admin').first()
+        return Response({
+            'id': admin.id,
+            'full_name': admin.full_name,
+            'avatar': admin.avatar.url if admin.avatar else None,
+        }, status=status.HTTP_200_OK)
 
-    #     msg = ChatMessage.objects.create(**data)
-    #     # socket_message = f'Message with id {msg.id} was created!'
-    #     # channel_layer = get_channel_layer()
-    #     # async_to_sync(channel_layer.group_send)(
-    #     #     f'{request.user.id}-message', {
-    #     #         'type': 'send_last_message',
-    #     #         'text': socket_message
-    #     #     }
-    #     # )
 
-    #     return Response({'status': True}, status=status.HTTP_201_CREATED)
+class ChatConversationListAdminAPIView(generics.ListAPIView):
+    permission_classes = (IsAdminUser,)
+    serializer_class = ChatConversationListSerializer
+    queryset = ChatMessage.objects.all()
 
+    def get_queryset(self):
+        return ChatMessage.objects.last_messages(self.request.user.id)
+
+
+class ChatMessageAdminAPIView(generics.ListAPIView):
+    queryset = ChatMessage.objects.all()
+    serializer_class = ChatSerializer
+    ordering = ('-created_at',)
+
+    def get_queryset(self):
+        return ChatMessage.objects.has_owned(self.kwargs.get('pk'))

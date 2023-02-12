@@ -4,9 +4,10 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from fashion_shopping_backend.celery import calculate_product_vector
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
 
+from fashion_shopping_backend.helpers import convert_to_base64
+from product_variants.models import ProductVariant
+from product_categories.models import ProductCategory
 from .models import Product
 from .serializers import *
 from .filter_set import ProductFilterSet
@@ -23,7 +24,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     )
     filterset_class = ProductFilterSet
     search_fields = ('name', 'description')
-    ordering_fields = ('price', 'rating')
+    ordering_fields = ('min_price', 'max_price', 'rating')
     ordering = ('id',)
 
     @action(detail=True, methods=['post'], serializer_class=ProductFavoriteSerializer, url_path='update-favorite')
@@ -39,13 +40,36 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     def search_by_image(self, request, pk=None):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        image = serializer.validated_data['image']
-        fs = FileSystemStorage(location=settings.BASE_DIR / 'tmp')
-        filename = fs.save(image.name, image)
-        results = Product.objects.search_by_image('/tmp/' + filename)
+        results = Product.objects.search_by_image(request.data['image'])
         serialized_data = ProductSerializer(
             results, many=True, context={'request': request}).data
-        return Response({'results': serialized_data}, status=status.HTTP_200_OK)
+        return Response({'results': serialized_data, 'count': len(serialized_data)}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='related-products')
+    def get_related_products(self, request, pk=None):
+        instance = self.get_object()
+        results = Product.objects.search_by_image(
+            convert_to_base64(instance.image), exclude_ids=[instance.id])
+        queryset = self.filter_queryset(results)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], serializer_class=ProductFilterSerializer,
+            url_path='product-filter')
+    def get_filter(self, request):
+        serializer = self.get_serializer(data={
+            'price_range': Product.objects.with_price_range(),
+            'colors': ProductVariant.objects.get_color_list(),
+            'sizes': ProductVariant.objects.get_size_list(),
+            'categories': ProductCategory.objects.values('id', 'name').distinct('name'),
+        })
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProductAdminViewSet(viewsets.ModelViewSet):

@@ -67,7 +67,7 @@ class RegisterAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        get_user_model().objects.create_user(data['email'], data['password'])
+        get_user_model().objects.create_user(**data)
 
         return Response({'message': 'Register successfully'}, status=status.HTTP_201_CREATED)
 
@@ -128,7 +128,7 @@ class RecoverPasswordView(PostAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        user = get_user_model().objects.get_by_email(data['email'])
+        user = get_user_model().objects.by_email(data['email'])
         user.change_password(data['new_password'])
 
         return Response({

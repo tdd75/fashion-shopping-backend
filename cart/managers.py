@@ -8,7 +8,7 @@ class CartQuerySet(models.QuerySet):
     def is_ordered(self, value):
         return self.filter(order__isnull=not value)
 
-    def get_by_product_variant_id(self, id):
+    def by_product_variant_id(self, id):
         return self.filter(product_variant_id=id).first()
 
 
