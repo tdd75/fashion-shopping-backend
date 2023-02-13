@@ -9,6 +9,4 @@ static/*
 
 media/*
 
-api/management/commands/seeder/data
-
 celerybeat-schedule
