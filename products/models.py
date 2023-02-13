@@ -33,10 +33,14 @@ class Product(BaseModel, ComputedFieldsModel):
 
     @computed(models.PositiveIntegerField(), depends=[('review_set', [])])
     def review_count(self):
+        if not self.pk:
+            return 0
         return self.review_set.count()
 
-    @computed(models.DecimalField(max_digits=2, decimal_places=1), depends=[('review_set', ['rating'])])
+    @computed(models.DecimalField(max_digits=2, decimal_places=1, null=True), depends=[('review_set', ['rating'])])
     def rating(self):
+        if not self.pk:
+            return None
         review_count = self.review_count
         if review_count == 0:
             return 0
