@@ -5,16 +5,13 @@ from django.db import models
 class ChatQuerySet(models.QuerySet):
     def create(self, **kwargs):
         instance = super().create(**kwargs, is_last_message=True)
-        last_msg = self.conversation(instance.sender.id, instance.receiver.id).exclude(
-            pk=instance.id).order_by('-created_at').first()
-        if last_msg:
-            last_msg.is_last_message=False
-            last_msg.save()
+        self.conversation(instance.sender.id, instance.receiver.id).exclude(
+            pk=instance.id).order_by('-created_at').update(is_last_message=False)
         return instance
-    
+
     def has_owned(self, user_id):
         return self.filter(Q(receiver_id=user_id) | Q(sender_id=user_id))
-    
+
     def conversation(self, id1, id2):
         return self.filter(Q(receiver_id=id1, sender_id=id2) | Q(receiver_id=id2, sender_id=id1))
 

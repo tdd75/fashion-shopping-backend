@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from .models import Address
@@ -10,6 +11,10 @@ from .swagger import ADDRESS_EXAMPLES
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+    filter_backends = (
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    )
     filterset_fields = ('is_default',)
     ordering = ('-is_default', 'id')
 

@@ -9,7 +9,7 @@ from .serializers import ChatSerializer
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
-        if self.scope['user'] is not AnonymousUser:
+        if getattr(self.scope['user'], 'id'):
             self.user_id = self.scope['user'].id
             self.room_group_name = f'{self.user_id}-message'
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)

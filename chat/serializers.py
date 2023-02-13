@@ -11,7 +11,7 @@ class ChatSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ('content', 'is_self', 'created_at', 'updated_at')
+        fields = '__all__'
 
     def get_is_self(self, obj) -> bool | None:
         if not self.context.get('request'):

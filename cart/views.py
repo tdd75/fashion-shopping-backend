@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, filters
 
 from .models import CartItem
 from .serializers import CartItemSerializer
@@ -9,7 +9,10 @@ class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.Creat
                                              viewsets.GenericViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-    ordering=('-created_at',)
+    filter_backends = (
+        filters.OrderingFilter,
+    )
+    ordering = ('-created_at',)
 
     def get_queryset(self):
         return CartItem.objects.has_owned(self.request.user.id).is_ordered(False).\
