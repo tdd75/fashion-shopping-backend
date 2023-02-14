@@ -7,7 +7,7 @@ from .managers import AddressManager, AddressQuerySet
 
 class Address(BaseModel):
     full_name = models.CharField(max_length=128)
-    phone = models.CharField(max_length=20, blank=True, null=True)
+    phone = models.CharField(max_length=20)
     city = models.CharField(max_length=64)
     district = models.CharField(max_length=64)
     ward = models.CharField(max_length=64)

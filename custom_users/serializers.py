@@ -10,7 +10,9 @@ class UserSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = get_user_model()
-        exclude = ('password',)
+        fields = ('id', 'username', 'email', 'phone',
+                  'first_name', 'last_name', 'full_name', 'avatar')
+        read_only_fields = ('username', 'email')
 
 
 class UserShortSerializer(FlexFieldsModelSerializer):

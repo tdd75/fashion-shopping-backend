@@ -5,8 +5,7 @@ from rest_framework.permissions import IsAdminUser
 from custom_users.serializers import UserSerializer, UserAdminSerializer
 
 
-class UserInfoDetailUpdateViewSet(mixins.RetrieveModelMixin,
-                                  mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class UserInfoDetailUpdateViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 

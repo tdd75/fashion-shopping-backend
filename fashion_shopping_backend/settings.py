@@ -43,7 +43,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    'http://20.40.50.235:8000',
+    'http://20.40.50.235',
 ]
 
 API_PREFIX = os.getenv('API_PREFIX') or 'api/v1/'
@@ -160,6 +160,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTION': {
+            'min_length': 6,
+        },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',

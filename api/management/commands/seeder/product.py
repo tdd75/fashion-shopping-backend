@@ -9,6 +9,7 @@ import random
 from product_variants.models import ProductVariant
 from products.models import Product
 from product_categories.models import ProductCategory
+from fashion_shopping_backend.celery import update_product_vector
 
 
 def create_product_categories():
@@ -75,3 +76,6 @@ def create_products():
             'product_id': created_product.id,
         }
         ProductVariant.objects.create(**product_variant_dict)
+
+    update_product_vector()
+    update_product_vector()
