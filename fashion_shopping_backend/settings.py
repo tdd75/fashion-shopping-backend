@@ -195,7 +195,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = f"http://{str(os.getenv('DOMAIN'))}/media/"
+MEDIA_URL = f"{os.getenv('DOMAIN')}/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
