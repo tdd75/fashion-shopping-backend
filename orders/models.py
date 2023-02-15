@@ -20,6 +20,8 @@ class Order(BaseModel):
         COD = 'COD', _('Cash on delivery')
         PAYPAL = 'PAYPAL', _('Paypal')
 
+    objects = OrderManager.from_queryset(OrderQuerySet)()
+
     code = models.CharField(max_length=12, default=generate_code, unique=True)
     stage = models.CharField(
         max_length=32, choices=Stage.choices, default=Stage.TO_PAY)
@@ -31,11 +33,9 @@ class Order(BaseModel):
     payment_method = models.CharField(
         max_length=16, choices=PaymentMethod.choices)
 
-    objects = OrderManager.from_queryset(OrderQuerySet)()
-
     @property
     def subtotal(self) -> float:
-        return sum(cart_item.amount for cart_item in self.cartitem_set.all())
+        return self.cartitem_set.with_amount().aggregate(models.Sum('annotate_amount')).get('annotate_amount__sum', 0)
 
     @property
     def discount(self) -> float:

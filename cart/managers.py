@@ -11,6 +11,9 @@ class CartQuerySet(models.QuerySet):
     def by_product_variant_id(self, id):
         return self.filter(product_variant_id=id).first()
 
+    def with_amount(self):
+        return self.annotate(annotate_amount=models.F('product_variant__price') * models.F('quantity'))
+
 
 class CartManager(models.Manager):
     pass

@@ -63,7 +63,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
             url_path='product-filter')
     def get_filter(self, request):
         serializer = self.get_serializer(data={
-            'price_range': Product.objects.with_price_range(),
+            'price_range': Product.objects.get_price_range(),
             'colors': ProductVariant.objects.get_color_list(),
             'sizes': ProductVariant.objects.get_size_list(),
             'categories': ProductCategory.objects.values('id', 'name').distinct('name'),

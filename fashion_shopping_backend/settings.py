@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'django_celery_results',
-    'computedfields',
 
     # internal apps
     'api',

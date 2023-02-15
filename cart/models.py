@@ -8,17 +8,13 @@ from .managers import CartManager, CartQuerySet
 
 
 class CartItem(BaseModel):
+    objects = CartManager.from_queryset(CartQuerySet)()
+
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     product_variant = models.ForeignKey(
         ProductVariant, null=True, on_delete=models.SET_NULL)
     order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE)
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-
-    objects = CartManager.from_queryset(CartQuerySet)()
-
-    @property
-    def amount(self) -> float:
-        return self.product_variant.price * self.quantity
 
     def __str__(self):
         return f'{self.product_variant}_{self.quantity}'

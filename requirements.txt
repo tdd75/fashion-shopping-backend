@@ -8,7 +8,6 @@ channels-redis
 celery
 django-celery-results
 django-crontab
-django-computedfields
 
 # Django REST
 djangorestframework

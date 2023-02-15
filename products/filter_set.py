@@ -5,8 +5,8 @@ from django_filters import FilterSet
 class ProductFilterSet(FilterSet):
     in_stock = filters.BooleanFilter(method='is_positive_number')
     is_favorite = filters.BooleanFilter(method='is_favorite_product')
-    min_price = filters.NumberFilter(field_name='min_price', lookup_expr='gt')
-    max_price = filters.NumberFilter(field_name='max_price', lookup_expr='lt')
+    min_price = filters.NumberFilter(method='min_price_filter')
+    max_price = filters.NumberFilter(method='max_price_filter')
     color = filters.CharFilter(
         field_name='productvariant__color', lookup_expr='icontains')
     size = filters.CharFilter(
@@ -24,3 +24,9 @@ class ProductFilterSet(FilterSet):
         elif value == False:
             return queryset.exclude(favorited_users__id=self.request.user.id)
         return queryset
+
+    def min_price_filter(self, queryset, name, value):
+        return queryset.with_min_price().filter(annotate_min_price__gt=value)
+
+    def max_price_filter(self, queryset, name, value):
+        return queryset.with_max_price().filter(annotate_max_price__lt=value)

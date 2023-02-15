@@ -6,14 +6,15 @@ from .managers import ProductVariantManager, ProductVariantQuerySet
 
 
 class ProductVariant(BaseModel):
+    objects = ProductVariantManager.from_queryset(ProductVariantQuerySet)()
+
     color = models.CharField(max_length=32)
     size = models.CharField(max_length=16)
     stocks = models.PositiveIntegerField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(
         max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
-    objects = ProductVariantManager.from_queryset(ProductVariantQuerySet)()
 
     class Meta:
         unique_together = ('color', 'size', 'product',)

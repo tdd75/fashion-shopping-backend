@@ -5,7 +5,7 @@ urlpatterns = [
     path('users/', include('custom_users.urls')),
     path('addresses/', include('addresses.urls')),
     path('products/', include('products.urls')),
-    path('product-types/', include('product_variants.urls')),
+    path('product-variants/', include('product_variants.urls')),
     path('reviews/', include('reviews.urls')),
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
