@@ -39,11 +39,12 @@ ALLOWED_HOSTS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'http://20.40.50.235:8000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    'http://20.40.50.235',
+    'http://20.40.50.235:8000',
 ]
 
 API_PREFIX = os.getenv('API_PREFIX') or 'api/v1/'

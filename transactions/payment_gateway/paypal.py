@@ -30,8 +30,9 @@ class PaypalPayment:
             'Authorization': 'Basic {0}'.format(base64.b64encode((client_id + ':' + client_secret).encode()).decode())
         }
         res = requests.post(url, data, headers=headers)
-        if res.ok:
-            return res.json()['access_token']
+        if not res.ok:
+            return Exception('Error when get paypal token')
+        return res.json()['access_token']
 
     def request_order(self, order_items):
         '''Create paypal order

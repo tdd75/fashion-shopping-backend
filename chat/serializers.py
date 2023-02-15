@@ -7,8 +7,6 @@ from custom_users.serializers import UserShortSerializer
 
 
 class ChatSerializer(FlexFieldsModelSerializer):
-    is_self = serializers.SerializerMethodField()
-
     class Meta:
         model = ChatMessage
         fields = '__all__'
