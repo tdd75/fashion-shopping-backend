@@ -12,6 +12,8 @@ class ProductSerializer(FlexFieldsModelSerializer):
     price_range = serializers.ListField(child=serializers.DecimalField(
         max_digits=12, decimal_places=2), read_only=True)
     stocks = serializers.IntegerField(read_only=True)
+    rating = serializers.DecimalField(
+        max_digits=2, decimal_places=1, read_only=True)
     review_count = serializers.IntegerField(read_only=True)
     is_favorite = serializers.SerializerMethodField()
 

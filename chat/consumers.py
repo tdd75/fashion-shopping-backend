@@ -11,7 +11,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         if getattr(self.scope['user'], 'id'):
             self.user_id = self.scope['user'].id
-            self.room_group_name = f'{self.user_id}-message'
+            self.room_group_name = 'admin-message'
+            # if self.scope['user'].username == 'admin':
+            #     self.room_group_name = 'admin-message'
+            # else:
+            #     self.room_group_name = f'{self.user_id}-message'
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
 

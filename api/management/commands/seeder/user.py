@@ -17,5 +17,6 @@ def create_users():
         'email': 'bot@gmail.com',
         'password': 'bot',
     }
+
     for info in [admin_info, bot_info]:
         User.objects.create_superuser(**info)

@@ -18,11 +18,12 @@ class ProductManager(models.Manager):
     def search_by_image(self, encoded_string, *, exclude_ids=None):
         res = requests.post('http://image_search:8001/api/v1/query-image/',
                             json={'file': encoded_string})
-        if res.ok:
-            result_ids = res.json()['results']
-            if exclude_ids:
-                result_ids = [id for id in result_ids if id not in exclude_ids]
-            return self.filter(pk__in=result_ids[:10])
+        if not res.ok:
+            return []
+        result_ids = res.json()['results']
+        if exclude_ids:
+            result_ids = [id for id in result_ids if id not in exclude_ids]
+        return self.filter(pk__in=result_ids[:10])
 
     def get_price_range(self):
         data = self.aggregate(min_price=models.Min(
