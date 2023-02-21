@@ -43,6 +43,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
     'http://localhost:8000',
     'http://20.40.50.235:8000',
 ]
@@ -85,6 +86,7 @@ INSTALLED_APPS = [
     'discount_tickets',
     'chat',
     'transactions',
+    'analytic',
 ]
 if DEBUG:
     INSTALLED_APPS.append('silk')

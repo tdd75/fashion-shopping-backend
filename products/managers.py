@@ -4,6 +4,9 @@ import base64
 
 
 class ProductQuerySet(models.QuerySet):
+    def has_price(self):
+        return self.filter(productvariant__price__isnull=False)
+
     def with_min_price(self):
         return self.annotate(annotate_min_price=models.Min('productvariant__price'))
 

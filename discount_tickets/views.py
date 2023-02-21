@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from .models import DiscountTicket
-from .serializers import DiscountTicketSerializer
+from .serializers import DiscountTicketSerializer, DiscountTicketAdminSerializer
 from .filter_set import DiscountTicketFilterSet
 
 
@@ -23,3 +23,8 @@ class DiscountTicketViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         ticket = self.get_object()
         ticket.saved_users.add(request.user.id)
         return Response({'message': 'Save succssfully.'}, status=status.HTTP_200_OK)
+
+
+class DiscountTicketViewSet(viewsets.ModelViewSet):
+    queryset = DiscountTicket.objects.all()
+    serializer_class = DiscountTicketAdminSerializer

@@ -15,7 +15,6 @@ class ProductVariant(BaseModel):
         max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
-
     class Meta:
         unique_together = ('color', 'size', 'product',)
 

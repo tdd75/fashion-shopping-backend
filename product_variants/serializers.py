@@ -11,3 +11,9 @@ class ProductVariantSerializer(FlexFieldsModelSerializer):
     expandable_fields = {
         'product': 'products.serializers.ProductSerializer'
     }
+
+class ProductAdminVariantSerializer(FlexFieldsModelSerializer):
+    class Meta:
+        model = ProductVariant
+        fields = '__all__'
+

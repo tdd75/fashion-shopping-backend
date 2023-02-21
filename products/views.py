@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
-from fashion_shopping_backend.celery import calculate_product_vector
 
+from fashion_shopping_backend.celery import calculate_product_vector
 from fashion_shopping_backend.helpers import convert_to_base64
 from product_variants.models import ProductVariant
 from product_categories.models import ProductCategory
@@ -14,8 +14,8 @@ from .filter_set import ProductFilterSet
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Product.objects.has_price().prefetch_related('productvariant_set')
     serializer_class = ProductSerializer
-    queryset = Product.objects.all().prefetch_related('productvariant_set')
     permission_classes = (AllowAny,)
     filter_backends = (
         DjangoFilterBackend,
@@ -76,17 +76,26 @@ class ProductAdminViewSet(viewsets.ModelViewSet):
     serializer_class = ProductAdminSerializer
     queryset = Product.objects.all().prefetch_related('productvariant_set')
     permission_classes = (IsAdminUser,)
-    # filter_backends = (
-    #     DjangoFilterBackend,
-    #     filters.SearchFilter,
-    #     filters.OrderingFilter,
-    # )
+    filter_backends = (
+        # DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    )
     # filterset_class = ProductFilterSet
-    # search_fields = ('name', 'description')
-    # ordering_fields = ('price', 'rating')
-    # ordering = ('id',)
+    search_fields = ('name', 'description')
+    ordering_fields = '__all__'
+    ordering = ('id',)
 
     def create(self, request, *args, **kwargs):
         created_product = super().create(request, *args, **kwargs)
         calculate_product_vector.delay(created_product.id)
         return created_product
+
+    @action(detail=False, methods=['delete'], serializer_class=ProductAdminBulkDeleteSerializer,
+            url_path='bulk-delete')
+    def bulk_delete(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        for product in serializer.validated_data['ids']:
+            product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

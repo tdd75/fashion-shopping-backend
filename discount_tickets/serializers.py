@@ -20,3 +20,8 @@ class DiscountTicketSerializer(FlexFieldsModelSerializer):
                 "Minimum order amount cannot be less than discount value!")
 
         return attrs
+
+class DiscountTicketAdminSerializer(FlexFieldsModelSerializer):
+    class Meta:
+        model = DiscountTicket
+        exclude = ('saved_users',)

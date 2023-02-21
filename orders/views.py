@@ -2,7 +2,7 @@ from rest_framework import mixins, viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Order
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderAdminSerializer
 
 
 class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
@@ -32,3 +32,16 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
     #     ticket = self.get_object()
     #     ticket.saved_users.add(request.user.id)
     #     return Response({'message': 'Save succssfully.'}, status=status.HTTP_200_OK)
+
+
+class OrderAdminViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderAdminSerializer
+    filter_backends = (
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    )
+    filterset_fields = ('stage',)
+    search_fields = ('code',)
+    ordering = ('-updated_at',)

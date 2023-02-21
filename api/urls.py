@@ -12,6 +12,7 @@ urlpatterns = [
     path('discount-tickets/', include('discount_tickets.urls')),
     path('chat/', include('chat.urls')),
     path('transactions/', include('transactions.urls')),
+    path('analytic/', include('analytic.urls')),
 ]
 
 handler500 = 'rest_framework.exceptions.server_error'

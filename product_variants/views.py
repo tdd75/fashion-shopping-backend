@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 
 from .serializers import ProductVariantSerializer
 from .models import ProductVariant
@@ -16,3 +16,9 @@ class ProductVariantViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         DjangoFilterBackend,
     )
     filterset_fields = ('product',)
+
+
+class ProductAdminVariantViewSet(viewsets.ModelViewSet):
+    queryset = ProductVariant.objects.all()
+    serializer_class = ProductVariantSerializer
+    permission_classes = (IsAdminUser,)

@@ -24,9 +24,8 @@ urlpatterns = [
     path('admin/', include('custom_admin.urls')),
     path('admin/', admin.site.urls),
     path(settings.API_PREFIX, include('api.urls')),
-    path('api-schema/', SpectacularAPIView.as_view(), name='api_schema'),
-    path('api-docs/', SpectacularSwaggerView.as_view(url_name='api_schema'),
-         name='api_docs'),
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
 ]
 
 if settings.DEBUG:

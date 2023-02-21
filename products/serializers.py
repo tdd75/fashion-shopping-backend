@@ -45,6 +45,11 @@ class ProductFilterSerializer(serializers.Serializer):
     categories = serializers.ListField(child=ProductCategorySerializer())
 
 
+class ProductAdminBulkDeleteSerializer(serializers.Serializer):
+    ids = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=True)
+
+
 class ProductAdminSerializer(FlexFieldsModelSerializer):
     image = Base64ImageField()
     price_range = serializers.ListField(child=serializers.DecimalField(

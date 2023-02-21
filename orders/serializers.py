@@ -10,6 +10,8 @@ from addresses.models import Address
 from addresses.serializers import AddressSerializer
 from discount_tickets.models import DiscountTicket
 from discount_tickets.serializers import DiscountTicketSerializer
+from transactions.serializers import TransactionSerializer
+from custom_users.serializers import UserSerializer
 from .models import Order
 
 
@@ -53,3 +55,31 @@ class OrderSerializer(FlexFieldsModelSerializer):
                 raise serializers.ValidationError('This ticket is expired')
 
         return value
+
+
+class OrderAdminSerializer(FlexFieldsModelSerializer):
+    order_items = OwnedPrimaryKeyRelatedField(
+        queryset=CartItem.objects.is_ordered(False), source='cartitem_set', many=True)
+    address = OwnedPrimaryKeyRelatedField(
+        queryset=Address.objects.all())
+    discount_ticket = serializers.PrimaryKeyRelatedField(
+        queryset=DiscountTicket.objects.all(), required=False, allow_null=True)
+    discount = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
+    subtotal = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
+    amount = serializers.DecimalField(
+        max_digits=12, decimal_places=2, read_only=True)
+    paid_at = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+    expandable_fields = {
+        'order_items': (CartItemSerializer, {'source': 'cartitem_set', 'many': True}),
+        'address': AddressSerializer,
+        'discount_ticket': DiscountTicketSerializer,
+        'owner': UserSerializer,
+        'transaction': TransactionSerializer,
+    }
