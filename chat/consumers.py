@@ -46,7 +46,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             'receiver_id': content.pop('receiver', None),
             'content': content.pop('content', ''),
         }
-        if not not data['content'].strip():
+        if not data['content'].strip():
             return None
         instance = ChatMessage.objects.create(**data)
         res = ChatSerializer(instance).data
