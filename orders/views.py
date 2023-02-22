@@ -1,5 +1,7 @@
-from rest_framework import mixins, viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins, viewsets, filters, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from .models import Order
 from .serializers import OrderSerializer, OrderAdminSerializer
@@ -26,6 +28,15 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
         if serializer.validated_data['payment_method'] == Order.PaymentMethod.COD:
             return serializer.save(stage=Order.Stage.TO_SHIP)
         return serializer.save()
+
+    @action(detail=True, methods=['post'], url_path='cancel')
+    def cancel_order(self, request, pk=None):
+        instance = self.get_object()
+        if instance.stage == Order.Stage.TO_PAY:
+            instance.stage = Order.Stage.CANCELLED
+            instance.save()
+            return Response({'message': 'Cancelled succssfully.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Orders cannot be canceled.'}, status=status.HTTP_400_BAD_REQUEST)
 
     # @action(detail=True, methods=['post'], url_path='get-amount')
     # def get_amount(self, request, pk=None):

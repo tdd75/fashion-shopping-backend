@@ -29,11 +29,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 'receiver': int
             }
         """
-        response = await sync_to_async(self._create_message)(content, )
-        await self.channel_layer.group_send(self.room_group_name, {
-            'type': 'chat_message',
-            'message': response,
-        })
+        response = await sync_to_async(self._create_message)(content)
+        if response:
+            await self.channel_layer.group_send(self.room_group_name, {
+                'type': 'chat_message',
+                'message': response,
+            })
 
     async def chat_message(self, event):
         await self.send_json(event['message'])
@@ -43,8 +44,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         data = {
             'sender_id': self.user_id,
             'receiver_id': content.pop('receiver', None),
-            'content': content.pop('content', None),
+            'content': content.pop('content', ''),
         }
+        if not not data['content'].strip():
+            return None
         instance = ChatMessage.objects.create(**data)
         res = ChatSerializer(instance).data
         return res
