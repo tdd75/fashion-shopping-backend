@@ -12,7 +12,8 @@ class ProductFilterSet(FilterSet):
     size = filters.CharFilter(
         field_name='productvariant__size', lookup_expr='icontains')
     category_id = filters.NumberFilter(field_name='category__id')
-    category = filters.CharFilter(field_name='category__name')
+    category = filters.CharFilter(
+        field_name='category__name', lookup_expr='icontains')
 
     def is_positive_number(self, queryset, name, value):
         if value == True:
