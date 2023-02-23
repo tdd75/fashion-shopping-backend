@@ -1,5 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 
 from api.models import models, BaseModel
 from addresses.models import Address
@@ -43,7 +44,7 @@ class Order(BaseModel):
 
     @property
     def amount(self) -> float:
-        return self.subtotal - (self.discount or 0)
+        return self.subtotal - (self.discount or 0) if self.subtotal else 0
 
     @property
     def paid_at(self):

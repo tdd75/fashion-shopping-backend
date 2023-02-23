@@ -25,6 +25,6 @@ class DiscountTicketViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return Response({'message': 'Save succssfully.'}, status=status.HTTP_200_OK)
 
 
-class DiscountTicketViewSet(viewsets.ModelViewSet):
+class DiscountTicketAdminViewSet(viewsets.ModelViewSet):
     queryset = DiscountTicket.objects.all()
     serializer_class = DiscountTicketAdminSerializer

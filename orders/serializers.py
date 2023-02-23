@@ -55,6 +55,10 @@ class OrderSerializer(FlexFieldsModelSerializer):
                 raise serializers.ValidationError('This ticket is expired')
 
         return value
+    
+    def save(self, **kwargs):
+        kwargs['amount'] = self.subtotal - (self.discount or 0) if self.subtotal else 0
+        return super().save(**kwargs)
 
 
 class OrderAdminSerializer(FlexFieldsModelSerializer):

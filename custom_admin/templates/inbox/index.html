@@ -3,33 +3,185 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="description" content="Inbox page"/>
-    <meta name="keywords" content="inbox,chat"/>
+    <meta name="description" content="Inbox page" />
+    <meta name="keywords" content="inbox,chat" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inbox</title>
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-          rel="stylesheet"/>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.8.5"
-            integrity="sha384-7aHh9lqPYGYZ7sTHvzP1t3BAfLhYSTy9ArHdP3Xsr9/3TlGurYgcPBoFmXX2TX/w"
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+    <!-- <script src="https://unpkg.com/htmx.org@1.8.5"
+    integrity="sha384-7aHh9lqPYGYZ7sTHvzP1t3BAfLhYSTy9ArHdP3Xsr9/3TlGurYgcPBoFmXX2TX/w"
+    crossorigin="anonymous"></script> -->
+    <!-- Websocket -->
+    <!-- <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script> -->
   </head>
+
   <body>
-    <div class="container">
-      <div class="card">
-        {% for user in users %}<div>{{ user.email }}</div>{% endfor %}
-      </div>
-      <div hx-ext="ws" ws-connect="/msg">
-        <div id="notifications"></div>
-        <div id="chat_room"></div>
-        <form id="form" ws-send>
-          <input name="chat_message" />
-          <button onclick="">Send</button>
-        </form>
+    <div class="container mt-5 overflow-hidden">
+      <div class="fw-bolder text-primary h4">Inbox</div>
+      <div class="row">
+        <div class="card col-6" style="height: 600px">
+          <div class="my-2 fw-bolder">Users</div>
+
+          <div id="conversations"></div>
+        </div>
+        <div class="card col-6" style="height: 600px">
+          <div class="mt-2 fw-bolder">Messages</div>
+          <div id="receiver" class="mt-2 fw-bolder"></div>
+
+          <div id="messages" style="height: 450px; overflow-y: scroll"></div>
+
+          <div class="d-flex position-absolute bottom-0 mb-2">
+            <input
+              id="msg-input"
+              placeholder="Input message ..."
+              name="msg"
+              class="me-2 px-2 rounded border-grey"
+              style="width: 560px"
+            />
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="submit-btn"
+              onclick="sendMessage()"
+            >
+              Send
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <script></script>
   </body>
 </html>
+
+<script>
+  const authString = localStorage.getItem('authorized');
+  const auth = JSON.parse(authString);
+  const token = auth.jwtAuth.value;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  let socket;
+
+  let currentReceiver;
+  const messagesEl = document.getElementById('messages');
+  const inputEl = document.getElementById('msg-input');
+  const conversationsEl = document.getElementById('conversations');
+  const receiverEl = document.getElementById('receiver');
+
+  inputEl.addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  onload = () => {
+    inputEl.disabled = true;
+    document.getElementById('submit-btn').disabled = true;
+    (async () => {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/chat/admin/conversations/`,
+        {
+          headers,
+        },
+      );
+      const data = await response.json();
+      conversationsEl.appendChild(
+        ...data['results'].map((msg) => createConversationTag(msg)),
+      );
+    })();
+  };
+
+  const createConversationTag = ({ user, last_message }) => {
+    const boxEl = document.createElement('div');
+    const userEl = document.createElement('div');
+
+    const lastMessageEl = document.createElement('div');
+
+    lastMessageEl.innerHTML = last_message;
+    lastMessageEl.style.cssText = 'font-size: 12px; color: gray';
+    userEl.innerHTML = `${user.full_name}`;
+
+    boxEl.className = 'user p-2 bg-light rounded-3 border-2 border';
+    boxEl.onclick = () => fetchMessages(user);
+
+    boxEl.appendChild(userEl);
+    boxEl.appendChild(lastMessageEl);
+    return boxEl;
+  };
+
+  const createMessageTag = (msg) => {
+    const box = document.createElement('div');
+    const content = document.createElement('div');
+    box.className =
+      'd-flex w-100' + (msg.sender !== receiver ? ' flex-row-reverse' : '');
+
+    content.innerHTML = msg.content;
+    content.className =
+      'm-2 p-2 rounded' +
+      (msg.sender !== receiver
+        ? ' bg-primary text-white' // me
+        : ' bg-light border border-2 text-dark'); // other
+    content.style.cssText = 'width: fit-content';
+
+    box.appendChild(content);
+    return box;
+  };
+
+  const fetchMessages = async (receiver) => {
+    currentReceiver = receiver;
+
+    receiverEl.innerHTML = `${receiver.full_name}`;
+    receiverEl.className =
+      'mb-2 p-2 text-primary fw-bolder bg-light rounded-3 ';
+
+    inputEl.disabled = false;
+    document.getElementById('submit-btn').disabled = false;
+    // clean up
+    messagesEl.innerHTML = '';
+    if (socket) socket.close();
+
+    // init socket
+    socket = new WebSocket(
+      `ws://localhost:8000/ws/msg/?token=${token}&receiver=${receiver.id}`,
+    );
+
+    socket.addEventListener('message', (event) => {
+      messagesEl.appendChild(createMessageTag(JSON.parse(event.data)));
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    });
+
+    // fetch messages
+    const response = await fetch(
+      `http://localhost:8000/api/v1/chat/admin/conversations/${receiver.id}/`,
+      {
+        headers,
+      },
+    );
+    const data = await response.json();
+    data['results'].forEach((msg) =>
+      messagesEl.appendChild(createMessageTag(msg)),
+    );
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  };
+
+  const sendMessage = () => {
+    const content = inputEl.value;
+    inputEl.value = '';
+    socket.send(JSON.stringify({ content, receiver: currentReceiver.id }));
+  };
+
+  // const sendMessage
+</script>
+
+<style>
+  .user {
+    cursor: pointer;
+  }
+</style>

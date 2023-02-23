@@ -9,8 +9,8 @@ from .managers import TransactionManager, TransactionQuerySet
 
 class Transaction(BaseModel):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
-    payment_link = models.URLField()
-    check_payment_link = models.URLField()
+    payment_link = models.URLField(null=True)
+    check_payment_link = models.URLField(null=True)
     paid_amount = models.DecimalField(
         max_digits=12, decimal_places=2, validators=[MinValueValidator(0)], null=True, default=None)
     paid_at = models.DateTimeField(null=True, default=None)

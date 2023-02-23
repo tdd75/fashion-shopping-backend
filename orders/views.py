@@ -2,8 +2,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets, filters, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.utils import timezone
 
 from .models import Order
+from transactions.models import Transaction
 from .serializers import OrderSerializer, OrderAdminSerializer
 
 
@@ -32,11 +34,22 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
     @action(detail=True, methods=['post'], url_path='cancel')
     def cancel_order(self, request, pk=None):
         instance = self.get_object()
-        if instance.stage == Order.Stage.TO_PAY:
+        if instance.stage in [Order.Stage.TO_PAY, Order.Stage.TO_SHIP]:
             instance.stage = Order.Stage.CANCELLED
             instance.save()
             return Response({'message': 'Cancelled succssfully.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Orders cannot be canceled.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], url_path='confirm-received')
+    def confirm_received(self, request, pk=None):
+        instance = self.get_object()
+        if instance.stage == Order.Stage.TO_RECEIVE:
+            instance.stage = Order.Stage.COMPLETED
+            instance.save()
+            Transaction.objects.create(
+                order=instance, paid_amount=instance.amount, paid_at=timezone.now())
+            return Response({'message': 'Order completed.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Orders cannot confirmed.'}, status=status.HTTP_400_BAD_REQUEST)
 
     # @action(detail=True, methods=['post'], url_path='get-amount')
     # def get_amount(self, request, pk=None):
