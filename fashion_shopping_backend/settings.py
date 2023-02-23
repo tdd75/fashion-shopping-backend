@@ -39,6 +39,7 @@ ALLOWED_HOSTS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'http://157.230.42.33:3000',
     'http://157.230.42.33:8000',
 ]
 
