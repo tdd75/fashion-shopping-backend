@@ -18,7 +18,7 @@ class AnalyticAdminAPIView(views.APIView):
         revenue_data = queryset.annotate(month=TruncMonth('created_at')).values(
             'month').annotate(value=models.Sum('transaction__paid_amount', default=0)).values('month', 'value')
         order_data = queryset.annotate(month=TruncMonth('created_at')).values(
-            'month').annotate(value=models.Count('pk', default=0)).values('month', 'value')
+            'month').annotate(value=models.Count('pk')).values('month', 'value')
 
         return Response({
             'revenue': revenue_data,
