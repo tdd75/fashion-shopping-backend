@@ -5,6 +5,9 @@ from celery import Celery
 
 from fashion_shopping_backend.helpers import convert_to_base64
 
+import logging
+_logger = logging.getLogger(__name__)
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'fashion_shopping_backend.settings')
 
@@ -18,6 +21,7 @@ app.autodiscover_tasks()
 def _calculate_product_vector(product):
     res = requests.post('http://image_search:8001/api/v1/get-vector/',
                         json={'file': convert_to_base64(product.image)})
+    print(res)
     if res.ok:
         product.feature_vector = res.json()['vector']
         product.save()
@@ -39,7 +43,7 @@ def test_task(self):
 def update_product_vector(self):
     from products.models import Product
 
-    for product in Product.objects.filter(feature_vector__isnull=True)[:500]:
+    for product in Product.objects.filter(feature_vector__isnull=True)[:100]:
         _calculate_product_vector(product)
 
 
@@ -47,6 +51,6 @@ def update_product_vector(self):
 app.conf.beat_schedule = {
     'calculate-feature-vector': {
         'task': 'update_product_vector',
-        'schedule': timedelta(minutes=5),
+        'schedule': timedelta(minutes=1),
     },
 }

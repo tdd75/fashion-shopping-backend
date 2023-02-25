@@ -19,6 +19,7 @@ class DiscountTicket(BaseModel):
     end_at = models.DateTimeField()
     saved_users = models.ManyToManyField(
         get_user_model(), through='TicketUserRel', blank=True)
+    send_notification = models.BooleanField(default=False)
 
     objects = DiscountTicketManager.from_queryset(DiscountTicketQuerySet)()
 
@@ -31,7 +32,8 @@ class DiscountTicket(BaseModel):
         ]
 
     def save(self, *args, **kwargs):
-        firebase_service.send_notification()
+        if self.send_notification:
+            firebase_service.send_notification()
         super().save(*args, **kwargs)
 
 

@@ -19,7 +19,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -39,6 +38,7 @@ ALLOWED_HOSTS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'http://localhost:8000',
     'http://157.230.42.33:3000',
     'http://157.230.42.33:8000',
 ]
@@ -49,6 +49,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://157.230.42.33:3000',
     'http://157.230.42.33:8000',
 ]
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY=None
 
 API_PREFIX = os.getenv('API_PREFIX') or 'api/v1/'
 
