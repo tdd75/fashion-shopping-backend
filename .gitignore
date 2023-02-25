@@ -10,3 +10,5 @@ static/*
 media/*
 
 celerybeat-schedule
+
+api/management/commands/seeder/data/products
