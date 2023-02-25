@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from fashion_shopping_backend.services.firebase import firebase_service
 from api.models import models, BaseModel
 from .managers import DiscountTicketManager, DiscountTicketQuerySet
 
@@ -28,6 +29,10 @@ class DiscountTicket(BaseModel):
                 name='correct_datetime'
             ),
         ]
+
+    def save(self, *args, **kwargs):
+        firebase_service.send_notification()
+        super().save(*args, **kwargs)
 
 
 class TicketUserRel(BaseModel):

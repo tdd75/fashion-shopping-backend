@@ -38,3 +38,6 @@ requests
 # benchmark
 locust
 tqdm
+
+# FCM Notification
+firebase-admin
