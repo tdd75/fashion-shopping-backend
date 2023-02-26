@@ -3,7 +3,7 @@ from django.db import models
 
 class ProductVariantQuerySet(models.QuerySet):
     def with_num_sold(self):
-        return self.filter(cartitem_set__order__isnull=False).annotate(annotate_num_sold=models.Sum('cartitem_set__quantity'))
+        return self.filter(cartitem__order__isnull=False).annotate(annotate_num_sold=models.Sum('cartitem__quantity'))
 
 
 class ProductVariantManager(models.Manager):
