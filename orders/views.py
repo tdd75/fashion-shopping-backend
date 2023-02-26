@@ -40,7 +40,7 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
             return Response({'message': 'Cancelled succssfully.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Orders cannot be canceled.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'], url_path='confirm-received')
+    @action(detail=True, methods=['post'], url_path='confirm-received', serializer_class=None)
     def confirm_received(self, request, pk=None):
         instance = self.get_object()
         if instance.stage == Order.Stage.TO_RECEIVE:
@@ -51,6 +51,7 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
             return Response({'message': 'Order completed.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Orders cannot confirmed.'}, status=status.HTTP_400_BAD_REQUEST)
 
+    # TODO: Implement calculate amount in backend
     # @action(detail=True, methods=['post'], url_path='get-amount')
     # def get_amount(self, request, pk=None):
     #     ticket = self.get_object()
