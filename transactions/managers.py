@@ -13,11 +13,11 @@ class TransactionQuerySet(models.QuerySet):
 
 
 class TransactionManager(models.Manager):
-    def _create_paypal_order(self, order_items):
+    def _create_paypal_order(self, order_code, order_items):
         data = [{
-            'reference_id': item.product_variant.id,
+            'reference_id': order_code,
             'description': f'{item.product_variant.product.name} | {item.product_variant.color} | {item.product_variant.size}',
-            'soft_descriptor': item.product_variant.product.name,
+            'soft_description': item.product_variant.product.name,
             'amount': {
                 'currency_code': 'USD',
                 'value': str(item.product_variant.price),
@@ -31,14 +31,32 @@ class TransactionManager(models.Manager):
 
         order_data = None
         if payment_method == Order.PaymentMethod.PAYPAL:
-            order_data = self._create_paypal_order(order_items)
+            order_data = self._create_paypal_order(order.code, order_items)
 
         if not order_data:
-            assert APIException('Something went wrong when create order.')
+            raise APIException('Something went wrong when create order.')
 
         return self.create(order=order,
                            payment_link=order_data['payment_link'],
                            check_payment_link=order_data['check_payment_link'])
 
     def remove_old_transaction(self, order_id):
-        return self.filter(order_id=order_id, paid_at__isnull=True).delete()
+        if self.filter(order_id=order_id, paid_at__isnull=False):
+            return False
+        else:
+            self.filter(order_id=order_id, paid_at__isnull=True).delete()
+            return True
+        
+    def check_order_paypal(self, order_id):
+        order_data = paypal_payment.check_order_completed(order_id)
+        if order_data:
+            instance = self.filter(order__code=order_data['code']).first()
+            if instance:
+                instance.paid_amount = order_data['paid_amount']
+                instance.paid_at = order_data['paid_at']
+                instance.order.stage = Order.Stage.TO_SHIP
+                instance.save()
+                instance.order.save()
+                return True
+        
+        return False

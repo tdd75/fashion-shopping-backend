@@ -30,7 +30,7 @@ class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
     ordering = ('id',)
     actions = ('set_quantity_zero',)
-    search_fields = ('name', 'description')
+    search_fields = ('id', 'name', 'description')
     list_filter = ('category',)
     exclude = ('feature_vector',)
     readonly_fields = ('min_price', 'max_price', 'rating',

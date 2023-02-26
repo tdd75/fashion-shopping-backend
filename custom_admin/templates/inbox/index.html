@@ -73,9 +73,9 @@
         },
       );
       const data = await response.json();
-      conversationsEl.appendChild(
-        ...data['results'].map((msg) => createConversationTag(msg)),
-      );
+      data['results'].map((msg) => createConversationTag(msg)).forEach(
+        (conv) => conversationsEl.appendChild(conv)
+      )
     })();
   };
 
@@ -89,7 +89,7 @@
     lastMessageEl.style.cssText = 'font-size: 12px; color: gray';
     userEl.innerHTML = `${user.full_name}`;
 
-    boxEl.className = 'user p-2 bg-light rounded-3 border-2 border';
+    boxEl.className = 'user p-2 mb-2 bg-light rounded-3 border-2 border';
     boxEl.onclick = () => fetchMessages(user);
 
     boxEl.appendChild(userEl);

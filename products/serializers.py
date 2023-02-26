@@ -18,7 +18,8 @@ class ProductSerializer(FlexFieldsModelSerializer):
     is_favorite = serializers.SerializerMethodField()
 
     expandable_fields = {
-        'variants': (ProductVariantSerializer, {'many': True, 'source': 'productvariant_set'})
+        'variants': (ProductVariantSerializer, {'many': True, 'source': 'productvariant_set'}),
+        'category': ProductCategorySerializer,
     }
 
     class Meta:
@@ -60,7 +61,6 @@ class ProductAdminSerializer(FlexFieldsModelSerializer):
 
     expandable_fields = {
         'variants': (ProductVariantSerializer, {'many': True, 'source': 'productvariant_set'}),
-        'category': ('product_categories.serializers.ProductCategorySerializer', {'source': 'category'})
     }
 
     class Meta:

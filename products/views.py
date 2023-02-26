@@ -1,8 +1,9 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAdminUser
-from django_filters.rest_framework import DjangoFilterBackend
+import random
 
 from fashion_shopping_backend.celery import calculate_product_vector
 from fashion_shopping_backend.helpers import convert_to_base64
@@ -23,7 +24,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         filters.OrderingFilter,
     )
     filterset_class = ProductFilterSet
-    search_fields = ('name', 'description')
+    search_fields = ('name', 'description', 'category__name')
     ordering_fields = ('min_price', 'max_price', 'rating', 'created_at')
     ordering = ('id',)
 
@@ -48,8 +49,11 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=['get'], url_path='related-products')
     def get_related_products(self, request, pk=None):
         instance = self.get_object()
-        results = Product.objects.search_by_image(
-            convert_to_base64(instance.image), exclude_ids=[instance.id])
+        same_category_product_ids = list(Product.objects.exclude(pk=instance.id) \
+                                    .filter(category_id=instance.category.id).values_list('id', flat=True))
+        results = Product.objects.filter(pk__in=random.choices(same_category_product_ids, k=10))
+        # results = Product.objects.search_by_image(
+        #     convert_to_base64(instance.image), product_ids=same_category_product_ids)
         queryset = self.filter_queryset(results)
         page = self.paginate_queryset(queryset)
         if page is not None:

@@ -14,22 +14,16 @@ from fashion_shopping_backend.celery import update_product_vector
 
 style_df = pd.read_csv('api/management/commands/seeder/styles.csv', on_bad_lines='skip')
 
-def create_product_categories():
-    ProductCategory.objects.all().delete()
-    categories = style_df['subCategory'].unique()
-    for category in categories:
-        ProductCategory.objects.create(name=category)
-
-
 def create_products():
-    create_product_categories()
+    ProductCategory.objects.all().delete()
     Product.objects.all().delete()
 
     data_path = 'api/management/commands/seeder/data/products/'
 
-    for file_name in tqdm(os.listdir(data_path)[:]):
+    for file_name in tqdm(random.sample(os.listdir(data_path), 2000)):
         matched_row = style_df[style_df['id'] == int(file_name.split('.')[0])].iloc[0]
-
+        category = ProductCategory.objects.get_or_create(name=matched_row['subCategory'])[0]
+        
         product_dict = {
             'name': matched_row['productDisplayName'],
             'description': f'''
@@ -41,7 +35,7 @@ def create_products():
             Aenean laoreet massa eu condimentum pulvinar.
             ''',
             'image': File(open(urljoin(data_path, file_name), 'rb'), name=file_name),
-            'category': ProductCategory.objects.filter(name=matched_row['subCategory']).first(),
+            'category': category,
         }
 
         created_product = Product.objects.create(**product_dict)

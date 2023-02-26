@@ -10,7 +10,7 @@ class ProductFilterSet(FilterSet):
     color = filters.CharFilter(
         field_name='productvariant__color', lookup_expr='icontains')
     size = filters.CharFilter(
-        field_name='productvariant__size', lookup_expr='icontains')
+        field_name='productvariant__size', lookup_expr='iexact')
     category_id = filters.NumberFilter(field_name='category__id')
     category = filters.CharFilter(
         field_name='category__name', lookup_expr='icontains')

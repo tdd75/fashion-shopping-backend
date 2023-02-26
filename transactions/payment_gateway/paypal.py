@@ -31,7 +31,7 @@ class PaypalPayment:
         }
         res = requests.post(url, data, headers=headers)
         if not res.ok:
-            return Exception('Error when get paypal token')
+            raise Exception('Error when get paypal token')
         return res.json()['access_token']
 
     def request_order(self, order_items):
@@ -42,7 +42,7 @@ class PaypalPayment:
                 List[dict]: [{
                     'reference_id': str,
                     'description': str,
-                    'soft_descriptor': str,
+                    'soft_description': str,
                     'amount': {
                         'currency_code': str,
                         'value': str
@@ -71,12 +71,25 @@ class PaypalPayment:
                 'payment_link': order_data['links'][1]['href'],
                 'check_payment_link': order_data['links'][3]['href'],
             }
+            
+        return False
 
     def check_order_completed(self, order_id):
         res = self.session.post(
             f'https://api.sandbox.paypal.com/v2/checkout/orders/{order_id}/capture')
         if res.ok:
-            return res.json().get('status') == 'COMPLETED'
+            data = res.json()
+            if data.get('status') == 'COMPLETED':
+                purchase_data = data['purchase_units'][0]
+                first_capture = purchase_data['payments']['captures'][0]
+                
+                return {
+                    'code': purchase_data['reference_id'],
+                    'paid_amount': first_capture['amount']['value'],
+                    'paid_at': first_capture['create_time'],
+                }
+                
+        return False
 
 
 paypal_payment = PaypalPayment()
