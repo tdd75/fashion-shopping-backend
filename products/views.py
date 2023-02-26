@@ -24,7 +24,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     )
     filterset_class = ProductFilterSet
     search_fields = ('name', 'description')
-    ordering_fields = ('min_price', 'max_price', 'rating')
+    ordering_fields = ('min_price', 'max_price', 'rating', 'created_at')
     ordering = ('id',)
 
     @action(detail=True, methods=['post'], serializer_class=ProductFavoriteSerializer, url_path='update-favorite')

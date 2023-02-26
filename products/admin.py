@@ -32,3 +32,6 @@ class ProductAdmin(admin.ModelAdmin):
     actions = ('set_quantity_zero',)
     search_fields = ('name', 'description')
     list_filter = ('category',)
+    exclude = ('feature_vector',)
+    readonly_fields = ('min_price', 'max_price', 'rating',
+                       'num_sold', 'stocks', 'favorited_users')
