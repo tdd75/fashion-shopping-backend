@@ -29,7 +29,7 @@ def create_products():
 
     for file_name in tqdm(os.listdir(data_path)[:]):
         matched_row = style_df[style_df['id'] == int(file_name.split('.')[0])].iloc[0]
-        print(File(open(urljoin(data_path, file_name), 'rb'), name=file_name))
+
         product_dict = {
             'name': matched_row['productDisplayName'],
             'description': f'''
@@ -46,11 +46,11 @@ def create_products():
 
         created_product = Product.objects.create(**product_dict)
         product_variant_dict = {
+            'product_id': created_product.id,
             'color': matched_row['baseColour'],
             'size': random.choice(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
             'stocks': random.randint(0, 100),
             'price': random.randint(400, 40000) / 100,
-            'product_id': created_product.id,
         }
         ProductVariant.objects.create(**product_variant_dict)
 
