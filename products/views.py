@@ -49,9 +49,10 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=['get'], url_path='related-products')
     def get_related_products(self, request, pk=None):
         instance = self.get_object()
-        same_category_product_ids = list(Product.objects.exclude(pk=instance.id) \
-                                    .filter(category_id=instance.category.id).values_list('id', flat=True))
-        results = Product.objects.filter(pk__in=random.choices(same_category_product_ids, k=10))
+        same_category_product_ids = list(Product.objects.exclude(pk=instance.id)
+                                         .filter(category_id=instance.category.id).values_list('id', flat=True))
+        results = Product.objects.filter(pk__in=random.choices(
+            same_category_product_ids, k=min(10, len(same_category_product_ids))))
         # results = Product.objects.search_by_image(
         #     convert_to_base64(instance.image), product_ids=same_category_product_ids)
         queryset = self.filter_queryset(results)
@@ -63,8 +64,8 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], serializer_class=ProductFilterSerializer,
-            url_path='product-filter')
+    @ action(detail=False, methods=['get'], serializer_class=ProductFilterSerializer,
+             url_path='product-filter')
     def get_filter(self, request):
         serializer = self.get_serializer(data={
             'price_range': Product.objects.get_price_range(),
@@ -95,8 +96,8 @@ class ProductAdminViewSet(viewsets.ModelViewSet):
         calculate_product_vector.delay(created_product.id)
         return created_product
 
-    @action(detail=False, methods=['delete'], serializer_class=ProductAdminBulkDeleteSerializer,
-            url_path='bulk-delete')
+    @ action(detail=False, methods=['delete'], serializer_class=ProductAdminBulkDeleteSerializer,
+             url_path='bulk-delete')
     def bulk_delete(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

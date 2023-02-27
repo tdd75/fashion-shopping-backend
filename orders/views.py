@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets, filters, status
 from rest_framework.response import Response
@@ -6,7 +7,7 @@ from django.utils import timezone
 
 from .models import Order
 from transactions.models import Transaction
-from .serializers import OrderSerializer, OrderAdminSerializer
+from .serializers import OrderSerializer, OrderAdminSerializer, ComputeOrderSerializer
 
 
 class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
@@ -51,11 +52,25 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
             return Response({'message': 'Order completed.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Orders cannot confirmed.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # @action(detail=True, methods=['post'], url_path='get-amount')
-    # def get_amount(self, request, pk=None):
-    #     ticket = self.get_object()
-    #     ticket.saved_users.add(request.user.id)
-    #     return Response({'message': 'Save succssfully.'}, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['post'], url_path='compute-order', serializer_class=ComputeOrderSerializer)
+    def compute_order(self, request, pk=None):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        subtotal = Decimal(0.0)
+        for cart_item in validated_data['cartitem_set']:
+            subtotal += cart_item.product_variant.price
+        discount_ticket = validated_data.get('discount_ticket')
+        discount = round(subtotal * discount_ticket.percent /
+                         100, 2) if discount_ticket else Decimal(0.0)
+        amount = subtotal - discount
+
+        return Response({
+            'subtotal': subtotal,
+            'discount': discount,
+            'amount': amount,
+        }, status=status.HTTP_200_OK)
 
 
 class OrderAdminViewSet(viewsets.ModelViewSet):
@@ -66,6 +81,6 @@ class OrderAdminViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     )
-    filterset_fields = ('stage',)
+    filterset_fields = ('stage', 'owner')
     search_fields = ('code',)
     ordering = ('-updated_at',)

@@ -57,6 +57,13 @@ class OrderSerializer(FlexFieldsModelSerializer):
         return value
 
 
+class ComputeOrderSerializer(serializers.Serializer):
+    cart_items = OwnedPrimaryKeyRelatedField(
+        queryset=CartItem.objects.is_ordered(False), source='cartitem_set', many=True)
+    discount_ticket = serializers.PrimaryKeyRelatedField(
+        queryset=DiscountTicket.objects.all(), required=False, allow_null=True)
+
+
 class OrderAdminSerializer(FlexFieldsModelSerializer):
     order_items = OwnedPrimaryKeyRelatedField(
         queryset=CartItem.objects.is_ordered(False), source='cartitem_set', many=True)

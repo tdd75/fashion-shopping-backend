@@ -9,3 +9,4 @@ class OrderQuerySet(models.QuerySet):
 class OrderManager(models.Manager):
     def clean_items_in_cart(self):
         pass
+    
