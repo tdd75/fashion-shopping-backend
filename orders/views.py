@@ -41,7 +41,7 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
             return Response({'message': 'Cancelled succssfully.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Orders cannot be canceled.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'], url_path='confirm-received')
+    @action(detail=True, methods=['post'], url_path='confirm-received', serializer_class=None)
     def confirm_received(self, request, pk=None):
         instance = self.get_object()
         if instance.stage == Order.Stage.TO_RECEIVE:

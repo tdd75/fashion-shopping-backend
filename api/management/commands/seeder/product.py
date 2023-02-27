@@ -20,7 +20,7 @@ def create_products():
 
     data_path = 'api/management/commands/seeder/data/products/'
 
-    for file_name in tqdm(random.sample(os.listdir(data_path), 2000)):
+    for file_name in tqdm(os.listdir(data_path)):
         matched_row = style_df[style_df['id'] == int(file_name.split('.')[0])].iloc[0]
         category = ProductCategory.objects.get_or_create(name=matched_row['subCategory'])[0]
         
