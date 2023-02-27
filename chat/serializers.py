@@ -28,3 +28,9 @@ class ChatConversationListSerializer(serializers.Serializer):
 
     def get_last_message(self, obj) -> str:
         return obj.content
+
+
+class ChatbotMessageSerializer(serializers.Serializer):
+    message = serializers.CharField(required=True)
+
+    init_chatbot_at = serializers.DateTimeField(required=False, allow_null=True)

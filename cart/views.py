@@ -1,8 +1,9 @@
 from rest_framework import mixins, viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import CartItem
 from .serializers import CartItemSerializer
-
+from .filter_set import CartFilterSet
 
 class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
                                              mixins.UpdateModelMixin, mixins.DestroyModelMixin,
@@ -10,8 +11,10 @@ class CartItemListCreateUpdateDestroyViewSet(mixins.ListModelMixin, mixins.Creat
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
     filter_backends = (
+        DjangoFilterBackend,
         filters.OrderingFilter,
     )
+    filterset_class = CartFilterSet
     ordering = ('-created_at',)
 
     def get_queryset(self):

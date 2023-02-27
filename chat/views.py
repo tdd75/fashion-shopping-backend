@@ -3,8 +3,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
 from django.contrib.auth import get_user_model
+import requests
 
-from .serializers import ChatSerializer, ChatConversationListSerializer
+from products.models import Product
+from products.views import ProductViewSet
+from products.serializers import ProductSerializer
+from .serializers import ChatSerializer, ChatConversationListSerializer, ChatbotMessageSerializer
 from .models import ChatMessage
 
 
@@ -48,3 +52,27 @@ class ChatMessageAdminAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return ChatMessage.objects.has_owned(self.kwargs.get('pk'))
+
+
+class ChatbotViewSet(generics.GenericAPIView):
+    serializer_class = ChatbotMessageSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        message = serializer.validated_data['message']
+        init_chatbot_at = serializer.validated_data['init_chatbot_at']
+
+        response = ChatMessage.objects.call_rasa(message)
+        # Rasa error
+        if not response:
+            return Response([{
+                'recipient_id': 'default',
+                'text': 'Sorry, something went wrong. Please try again.'
+            }], status=status.HTTP_200_OK)
+
+        fallback_msg = response.pop() if len(response) > 1 else None
+        processed_msgs = [(ChatMessage.objects.process_msg(
+            request, msg, init_chatbot_at) or fallback_msg) for msg in response]
+
+        return Response(processed_msgs, status=status.HTTP_200_OK)
