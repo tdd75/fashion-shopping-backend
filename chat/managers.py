@@ -55,16 +55,16 @@ class ChatManager(models.Manager):
         elif custom_msg['payload'] == 'order_status':
             res = requests.get(
                 'http://localhost:8000/api/v1/orders/', headers=headers, params={
-                    'ordering': '-created_at',
+                    'ordering': '-updated_at',
                     'expand': 'order_items,order_items.product_variant,order_items.product_variant.product',
                     'limit': 5,
                 })
         elif custom_msg['payload'] == 'place_order':
             res = requests.get(
                 'http://localhost:8000/api/v1/cart/', headers=headers, params={
-                    'ordering': '-created_at',
+                    'ordering': '-updated_at',
                     'expand': 'product_variant,product_variant.product',
-                    'created_at': init_chatbot_at,
+                    'updated_at': init_chatbot_at,
                 })
         # fill data for custom message
         if not res.ok or not res.json()['results']:

@@ -72,7 +72,9 @@ class ChatbotViewSet(generics.GenericAPIView):
             }], status=status.HTTP_200_OK)
 
         fallback_msg = response.pop() if len(response) > 1 else None
-        processed_msgs = [(ChatMessage.objects.process_msg(
-            request, msg, init_chatbot_at) or fallback_msg) for msg in response]
+        processed_msgs = [ChatMessage.objects.process_msg(
+            request, msg, init_chatbot_at) for msg in response]
+        if any(msg is None for msg in processed_msgs):
+            processed_msgs = [fallback_msg]
 
         return Response(processed_msgs, status=status.HTTP_200_OK)
