@@ -57,7 +57,6 @@ class PaypalPayment:
             'intent': 'CAPTURE',
             'application_context': {
                 'brand_name': 'Fashion Shopping',
-                'landing_page': 'BILLING',
                 'shipping_preference': 'NO_SHIPPING',
                 'user_action': 'PAY_NOW'
             },

@@ -60,7 +60,7 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
 
         subtotal = Decimal(0.0)
         for cart_item in validated_data['cartitem_set']:
-            subtotal += cart_item.product_variant.price
+            subtotal += cart_item.product_variant.price * cart_item.quantity
         discount_ticket = validated_data.get('discount_ticket')
         discount = round(subtotal * discount_ticket.percent /
                          100, 2) if discount_ticket else Decimal(0.0)
