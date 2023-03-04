@@ -24,7 +24,7 @@ from chat.middlewares import WebSocketJWTAuthMiddleware
 
 application = ProtocolTypeRouter(
     {
-        'http': asgi_apps,
+        # 'http': asgi_apps,
         'websocket': WebSocketJWTAuthMiddleware(URLRouter(routing.websocket_urlpatterns)),
     }
 )

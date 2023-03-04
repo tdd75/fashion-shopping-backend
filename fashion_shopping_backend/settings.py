@@ -50,7 +50,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://157.230.42.33:8000',
 ]
 
-SECURE_CROSS_ORIGIN_OPENER_POLICY=None
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 API_PREFIX = os.getenv('API_PREFIX') or 'api/v1/'
 
@@ -129,7 +129,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'fashion_shopping_backend.wsgi.application'
+WSGI_APPLICATION = 'fashion_shopping_backend.wsgi.application'
 ASGI_APPLICATION = 'fashion_shopping_backend.asgi.application'
 
 
