@@ -129,7 +129,7 @@
 
     // init socket
     socket = new WebSocket(
-      `ws://${hostName}:8000/ws/msg/?token={{ access }}&receiver=${receiver.id}`,
+      `ws://${hostName}:8001/ws/msg/?token={{ access }}&receiver=${receiver.id}`,
     );
 
     socket.addEventListener('message', (event) => {

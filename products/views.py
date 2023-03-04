@@ -1,9 +1,13 @@
-from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 from rest_framework import filters, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAdminUser
+from django_filters.rest_framework import DjangoFilterBackend
 import random
+from django.conf import settings
 
 from fashion_shopping_backend.celery import calculate_product_vector
 from fashion_shopping_backend.helpers import convert_to_base64
@@ -27,7 +31,17 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ('name', 'description', 'category__name')
     ordering_fields = ('min_price', 'max_price', 'rating', 'created_at')
     ordering = ('id',)
-
+    
+    @method_decorator(vary_on_cookie)
+    @method_decorator(cache_page(settings.CACHE_TTL))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+    
+    @method_decorator(vary_on_cookie)
+    @method_decorator(cache_page(settings.CACHE_TTL))
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+    
     @action(detail=True, methods=['post'], serializer_class=ProductFavoriteSerializer, url_path='update-favorite')
     def update_favorite(self, request, pk=None):
         serializer = self.get_serializer(data=request.data)
