@@ -27,7 +27,8 @@ class WebSocketJWTAuthMiddleware:
             token = parsed_query_string.get(b'token')[0].decode('utf-8')
             access_token = AccessToken(token)
             scope['user'] = await get_user(access_token['user_id'])
-            scope['receiver'] = int(parsed_query_string.get(b'receiver')[0].decode('utf-8'))
+            scope['receiver'] = int(parsed_query_string.get(
+                b'receiver')[0].decode('utf-8'))
         except:
             scope['user'] = AnonymousUser()
 

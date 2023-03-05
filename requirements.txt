@@ -4,6 +4,7 @@ django-cors-headers
 django-filter
 gunicorn
 daphne
+uvicorn[standard]
 channels
 channels-redis
 celery

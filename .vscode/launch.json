@@ -18,6 +18,21 @@
         }
       ],
       "justMyCode": false
+    },
+    {
+      "name": "Python: Django Channel",
+      "type": "python",
+      "request": "attach",
+      "port": 8001,
+      "debugServer": 10000,
+      "host": "localhost",
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/app/web_ws"
+        }
+      ],
+      "justMyCode": false
     }
   ]
 }
