@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 
 
 def _calculate_product_vector(product):
-    res = requests.post('http://image_search:8001/api/v1/get-vector/',
+    res = requests.post('http://image_search:8100/api/v1/get-vector/',
                         json={'file': convert_to_base64(product.image)})
     print(res)
     if res.ok:

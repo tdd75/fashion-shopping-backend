@@ -19,7 +19,7 @@ class ProductManager(models.Manager):
         pass
 
     def search_by_image(self, encoded_string, *, product_ids=None):
-        res = requests.post('http://image_search:8001/api/v1/query-image/',
+        res = requests.post('http://image_search:8100/api/v1/query-image/',
                             json={'file': encoded_string, 'product_ids': product_ids})
         if not res.ok:
             return []
