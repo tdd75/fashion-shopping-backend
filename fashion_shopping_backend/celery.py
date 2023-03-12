@@ -38,7 +38,7 @@ def calculate_product_vector(self, id):
 def update_product_vector(self):
     from products.models import Product
 
-    for product in Product.objects.filter(feature_vector__isnull=True)[:100]:
+    for product in Product.objects.filter(feature_vector__isnull=True)[:500]:
         _calculate_product_vector(product)
 
 

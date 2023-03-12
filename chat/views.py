@@ -68,7 +68,7 @@ class ChatbotViewSet(generics.GenericAPIView):
         if not response:
             return Response([{
                 'recipient_id': 'default',
-                'text': 'Sorry, something went wrong. Please try again.'
+                'text': 'I\'m sorry, I didn\'t quite understand what you meant.'
             }], status=status.HTTP_200_OK)
 
         fallback_msg = response.pop() if len(response) > 1 else None

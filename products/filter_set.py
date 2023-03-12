@@ -1,3 +1,4 @@
+from rest_framework.exceptions import NotAuthenticated
 from django_filters.rest_framework import filters
 from django_filters import FilterSet
 
@@ -21,6 +22,8 @@ class ProductFilterSet(FilterSet):
         return queryset
 
     def is_favorite_product(self, queryset, name, value):
+        if not self.request.user.id:
+            raise NotAuthenticated('Please login to fetch favorite list')
         if value == True:
             return queryset.filter(favorited_users__id=self.request.user.id)
         elif value == False:
