@@ -1,21 +1,23 @@
 from locust import HttpUser, task
+import random
 
 
 class LoadBenchmark(HttpUser):
-    @task
-    def fetch_products(self):
-        res = self.client.get('/api/v1/products/?limit=10', headers={
-            # 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc4Mzg1Mjg5LCJpYXQiOjE2Nzc3ODA0ODksImp0aSI6ImIxODkyYzIwOTJiZDQ2ZDdiYTg3ZmU5MjMyMjE0MTBmIiwidXNlcl9pZCI6MTl9.2FI9uITDUjsfVXkSuh0pLJGNexmKkEEgcWffuM7j-8c'
-        })
-        print(res.json())
-        assert res.status_code == 200
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    # @task
-    # def login(self):
-    #     res = self.client.post('/user/login', json={
-    #         'Username': 'tuannha',
-    #         'Password': '123456',
-    #         'Role': 1
-    #     })
-    #     print(res.json())
-    #     assert res.status_code == 200
+    @task
+    def fetch_products_and_detail(self):
+        # fetch products
+        random_offset = random.randint(0, 7000)
+        products_res = self.client.get(
+            f'/api/v1/products/?limit=10&offset={random_offset}')
+        assert products_res.status_code == 200
+        assert len(products_res.json()['results']) == 10
+
+        # fetch product detail
+        random_index = random.randint(0, 9)
+        product_id = products_res.json()['results'][random_index]['id']
+        product_detail_res = self.client.get(f'/api/v1/products/{product_id}/')
+        assert product_detail_res.status_code == 200
+        assert product_detail_res.json()['id'] == product_id
