@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 import requests
 
 
@@ -48,20 +49,20 @@ class ChatManager(models.Manager):
         }
         if custom_msg['payload'] == 'list_product':
             res = requests.get(
-                'http://localhost:8000/api/v1/products/', headers=headers, params={
+                f'{settings.DOMAIN}/api/v1/products/', headers=headers, params={
                     **custom_msg['data'],
                     'limit': 5,
                 })
         elif custom_msg['payload'] == 'order_status':
             res = requests.get(
-                'http://localhost:8000/api/v1/orders/', headers=headers, params={
+                f'{settings.DOMAIN}/api/v1/orders/', headers=headers, params={
                     'ordering': '-updated_at',
                     'expand': 'order_items,order_items.product_variant,order_items.product_variant.product',
                     'limit': 5,
                 })
         elif custom_msg['payload'] == 'place_order':
             res = requests.get(
-                'http://localhost:8000/api/v1/cart/', headers=headers, params={
+                f'{settings.DOMAIN}/api/v1/cart/', headers=headers, params={
                     'ordering': '-updated_at',
                     'expand': 'product_variant,product_variant.product',
                     'updated_at': init_chatbot_at,

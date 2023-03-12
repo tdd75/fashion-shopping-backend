@@ -7,6 +7,8 @@ from orders.models import Order
 from .serializers import TransactionSerializer
 from .models import Transaction
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class TransactionViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Transaction.objects.all()
@@ -32,8 +34,9 @@ class TransactionViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             raise APIException(e)
         return Response({'payment_link': transaction.payment_link}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['post'], url_path='paypal/webhook', serializer_class=None, permission_classes=())
+    @action(detail=False, methods=['post'], url_path='paypal/webhook/approved', serializer_class=None, permission_classes=())
     def check_paypal(self, request, pk=None):
+        _logger.error(request.data)
         result = Transaction.objects.check_order_paypal(request.data['resource']['id'])
         if result:
             return Response({'message': 'Order confirmed.'}, status=status.HTTP_200_OK)

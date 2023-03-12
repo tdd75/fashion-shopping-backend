@@ -2,6 +2,8 @@ import os
 import base64
 import requests
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class PaypalPayment:
     def __init__(self) -> None:
@@ -74,21 +76,24 @@ class PaypalPayment:
         return False
 
     def check_order_completed(self, order_id):
-        res = self.session.post(
-            f'https://api.sandbox.paypal.com/v2/checkout/orders/{order_id}/capture')
+        for i in range(3):
+            res = self.session.post(
+                f'https://api.sandbox.paypal.com/v2/checkout/orders/{order_id}/capture')
+            _logger.error(res.json())
+            if res.ok:
+                break
+            
         if res.ok:
             data = res.json()
             if data.get('status') == 'COMPLETED':
                 purchase_data = data['purchase_units'][0]
                 first_capture = purchase_data['payments']['captures'][0]
-                
                 return {
                     'code': purchase_data['reference_id'],
                     'paid_amount': first_capture['amount']['value'],
                     'paid_at': first_capture['create_time'],
                 }
-                
-        return False
+        return False 
 
 
 paypal_payment = PaypalPayment()

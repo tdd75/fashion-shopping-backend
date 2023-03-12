@@ -21,7 +21,6 @@ _logger = logging.getLogger(__name__)
 def _calculate_product_vector(product):
     res = requests.post('http://image_search:8100/api/v1/get-vector/',
                         json={'file': convert_to_base64(product.image)})
-    print(res)
     if res.ok:
         product.feature_vector = res.json()['vector']
         product.save()
@@ -54,10 +53,10 @@ def check_order(self):
 
 # cron jobs
 app.conf.beat_schedule = {
-    'check-order': {
-        'task': 'check_order',
-        'schedule': timedelta(minutes=10),
-    },
+    # 'check-order': {
+    #     'task': 'check_order',
+    #     'schedule': timedelta(seconds=4),
+    # },
     'calculate-feature-vector': {
         'task': 'update_product_vector',
         'schedule': timedelta(minutes=1),

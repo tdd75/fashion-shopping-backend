@@ -67,7 +67,7 @@
     document.getElementById('submit-btn').disabled = true;
     (async () => {
       const response = await fetch(
-        `http://${hostName}:8000/api/v1/chat/admin/conversations/`,
+        `https://${hostName}/api/v1/chat/admin/conversations/`,
         {
           headers,
         },
@@ -129,7 +129,7 @@
 
     // init socket
     socket = new WebSocket(
-      `ws://${hostName}:8001/ws/msg/?token={{ access }}&receiver=${receiver.id}`,
+      `wss://${hostName}/ws/msg/?token={{ access }}&receiver=${receiver.id}`,
     );
 
     socket.addEventListener('message', (event) => {
@@ -139,7 +139,7 @@
 
     // fetch messages
     const response = await fetch(
-      `http://${hostName}:8000/api/v1/chat/admin/conversations/${receiver.id}/`,
+      `https://${hostName}/api/v1/chat/admin/conversations/${receiver.id}/`,
       {
         headers,
       },

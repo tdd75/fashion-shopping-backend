@@ -28,26 +28,28 @@ SECRET_KEY = 'django-insecure-@qgfj76u_0q95v+s%dz)bo4)$*e@)rew$y&_#ciiy*6jgt+#p*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 
+DOMAIN = os.getenv('DOMAIN') or 'https://localhost:8000'
+
 ALLOWED_HOSTS = [
     '*',
     '127.0.0.1',
     'localhost',
     '192.168.1.3',
-    '157.230.42.33',
+    'anovar.online',
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
-    'http://157.230.42.33:3000',
-    'http://157.230.42.33:8000',
+    'http://anovar.online',
+    'https://anovar.online',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
-    'http://157.230.42.33:3000',
-    'http://157.230.42.33:8000',
+    'http://anovar.online',
+    'https://anovar.online',
 ]
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
@@ -195,13 +197,13 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_ROOT = BASE_DIR / 'static'
-STATIC_URL = f'{os.getenv("DOMAIN")}/static/'
+STATIC_URL = f'{DOMAIN}/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'media'
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = f'{os.getenv("DOMAIN")}/media/'
+MEDIA_URL = f'{DOMAIN}/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
