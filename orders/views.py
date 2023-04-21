@@ -1,15 +1,26 @@
 from decimal import Decimal
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, viewsets, filters, status
+from rest_framework import mixins, viewsets, filters, status, views
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.utils import timezone
+from drf_spectacular.utils import OpenApiParameter, extend_schema_view, extend_schema
 
 from .models import Order
 from transactions.models import Transaction
 from .serializers import OrderSerializer, OrderAdminSerializer, ComputeOrderSerializer
 
 
+def schema_flex_fields_params():
+    return extend_schema_view(
+        list=extend_schema(parameters=[
+            OpenApiParameter(name='fields', type=str),
+            OpenApiParameter(name='omit', type=str),
+            OpenApiParameter(name='expand', type=str),
+        ])
+    )
+
+@schema_flex_fields_params()
 class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
                                    mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Order.objects.all()
@@ -32,7 +43,7 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
             return serializer.save(stage=Order.Stage.TO_SHIP)
         return serializer.save()
 
-    @action(detail=True, methods=['post'], url_path='cancel')
+    @action(url_path='cancel', detail=True, methods=['post'])
     def cancel_order(self, request, pk=None):
         instance = self.get_object()
         if instance.stage in [Order.Stage.TO_PAY, Order.Stage.TO_SHIP]:
@@ -41,7 +52,7 @@ class OrderListCreateDetailViewSet(mixins.ListModelMixin, mixins.CreateModelMixi
             return Response({'message': 'Cancelled succssfully.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Orders cannot be canceled.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'], url_path='confirm-received', serializer_class=None)
+    @action(url_path='confirm-received', detail=True, methods=['post'], serializer_class=None)
     def confirm_received(self, request, pk=None):
         instance = self.get_object()
         if instance.stage == Order.Stage.TO_RECEIVE:
